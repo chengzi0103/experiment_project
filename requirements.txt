@@ -58,3 +58,7 @@ neomodel[extras]
 
 # --------- yaml --------- #
 pyyaml
+
+# --------- agent --------- #
+crewai[tools]
+pyautogen
