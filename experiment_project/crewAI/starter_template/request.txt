@@ -1,0 +1,6 @@
+crewai
+crewai[tools]
+unstructured==0.10.25
+pyowm==3.3.0
+tools
+python-dotenv==1.0.0

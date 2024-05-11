@@ -1,0 +1,60 @@
+# --------- tool --------- #
+sphinx
+sphinx-rtd-theme
+pytest>=7.4.3
+pytest-cov>=4.1.0
+pyrootutils>=1.0.4          # standardizing the project root setup
+pre-commit>=3.5.0
+twine>=4.0.1
+wheel>=0.41.3
+coverage>=7.3.2
+
+# --------- date --------- #
+pendulum>=3.0.0  # pendulum>=3.0.0 对时间 pendulum.parse('2023-01-01') 处理不一样,3.0.0更灵活
+
+
+# --------- path --------- #
+pathlib
+
+# --------- data --------- #
+pydantic
+
+# --------- config --------- #
+hydra-core>=1.3.2
+hydra-colorlog>=1.2.0
+hydra-optuna-sweeper>=1.2.0
+
+# --------- matrix --------- #
+matrix-nio
+simplematrixbotlib
+
+# --------- distribute --------- #
+ray[default,server]==2.8.1
+
+
+# --------- ai --------- #
+openai
+
+
+# --------- deploy --------- #
+ansible
+
+
+# --------- mastodon_robot --------- #
+Mastodon.py
+
+# --------- data --------- #
+numpy
+pandas
+polars
+
+# --------- spider --------- #
+BeautifulSoup4
+
+# --------- graph database --------- #
+neo4j
+neomodel[extras]
+
+
+# --------- yaml --------- #
+pyyaml
