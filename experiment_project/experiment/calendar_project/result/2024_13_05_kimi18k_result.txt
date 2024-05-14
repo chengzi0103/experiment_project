@@ -1,0 +1,249 @@
+/home/cc/miniconda/bin/conda run -n vllm_py10 --no-capture-output python /home/cc/.pycharm_helpers/pydev/pydevconsole.py --mode=client --host=127.0.0.1 --port=46477
+import sys; print('Python %s on %s' % (sys.version, sys.platform))
+sys.path.extend(['/mnt/d/project/zzbc', '/mnt/d/project/zzbc/aiverse', '/mnt/d/project/zzbc/experiment_project'])
+PyDev console: using IPython 8.24.0
+Python 3.10.0 (default, Mar  3 2022, 09:58:08) [GCC 7.5.0] on linux
+import copy
+import uuid
+from autogen import AssistantAgent,UserProxyAgent, GroupChat, GroupChatManager
+from experiment_project.experiment.autogen_project.calendar_project.tools.data import create_user_event
+from experiment_project.utils.agent.util import create_sqlite_db_name
+from experiment_project.utils.files.read import read_yaml
+from autogen.agentchat.contrib.capabilities import context_handling
+from experiment_project.utils.func.util import load_functions_from_directory
+secret_env_file = '/mnt/d/project/dy/extra/autogen/env_secret_config.yaml'
+# log_db_name = create_sqlite_db_name()
+api_configs = read_yaml(secret_env_file)
+user = UserProxyAgent(name='user',system_message='真实的用户',code_execution_config={"work_dir": "/mnt/d/project/dy/extra/autogen/output","use_docker":False})
+user_events = create_user_event(days_num=30)
+calendar_enenvt_agent = AssistantAgent(name="calendar_enenvt_agent",system_message=f"""
+### Context (上下文)
+作为日历系统的核心组件，日程管理Agent负责维护和管理用户的日历事件。它处理日常的日程管理任务，并提供API接口供其他Agent查询和操作日历信息。
+### Output (输出)
+期望输出包括对日程管理任务的反馈和执行结果，如成功查看、创建、编辑、删除和完成事件的确认信息，以及通过API接口返回的查询结果或操作反馈。
+### Specificity (具体性)
+- **查看事件**：需要用户指定查询的时间范围。
+- **创建事件**：用户必须提供事件的详细信息，包括时间、地点和描述等。
+- **编辑事件**：用户需指定要修改的事件ID及新的事件详情。
+- **删除事件**：用户需提供要删除的事件ID。
+- **完成事件**：用户需指定要标记为完成的事件ID。
+- **事件查询接口**：其他Agent调用时需指定查询条件。
+- **事件操作接口**：其他Agent调用时需提供操作类型和必要的事件信息。
+### Tone (语气)
+Agent的回应应保持专业、准确，同时在可能的情况下友好和易于理解。
+### Ask (提问)
+请日程管理Agent执行上述详细功能中的任一任务，并提供必要的信息。
+### Restrictions (限制)
+### Examples (示例)
+- **查看事件**："请在2023年12月1日至2023年12月31日之间，展示所有日程事件。"
+- **创建事件**："请在2023年12月25日下午3点，创建一个标题为‘圣诞聚会’的事件，地点在我的家。"
+- **编辑事件**："请将ID为123的事件时间更改为2023年12月26日上午10点。"
+- **删除事件**："请删除ID为456的事件。"
+- **完成事件**："请将ID为789的事件标记为已完成。"
+- **事件查询接口**："请求查询2023年12月所有标记为‘工作’类别的事件。"
+- **事件操作接口**："请求为2023年11月15日创建一个标题为‘项目会议’的新事件。"
+""",llm_config=api_configs.get('kimi'),human_input_mode='ALWAYS')
+intelligent_recommendation_agent = AssistantAgent(name="intelligent_recommendation_agent",system_message=f"""
+### Context (上下文)
+用户希望通过智能建议Agent获取个性化的时间管理和日程优化建议。Agent需要分析用户的日程历史和偏好，识别时间管理习惯，并提供有价值的建议来优化用户的时间使用效率。
+### Output (输出)
+输出应包括对用户时间管理习惯的分析结果、个性化的日程安排和时间管理建议，以及根据用户偏好推荐的新活动。
+### Specificity (具体性)
+1. 分析用户日程历史中的活动类型和时间偏好。
+2. 识别用户的工作与休息平衡以及高效工作的时间段。
+3. 提供具体的日程调整建议，如调整会议时间、建议合理的休息间隔。
+4. 根据用户的兴趣和空闲时间推荐新活动。
+### Tone (语气)
+输出的语气应该是鼓励和支持的，旨在帮助用户更好地理解和改善他们的时间管理习惯。
+### Ask (提问)
+"基于我的日程历史和偏好，你能分析我的时间管理习惯，并提供一些个性化的日程优化和时间管理建议吗？同时，考虑到我的兴趣，有没有新的活动推荐？"
+### Restrictions (限制)
+### Examples (示例)
+- 分析结果可能包括："我们注意到你在周末的上午有较多的空闲时间，而工作日的晚上经常安排学习活动。"
+- 日程优化建议可能是："考虑到你晚上的学习活动，我们建议在学习前安排10分钟的休息时间，以提高学习效率。"
+- 时间管理建议可能是："你可以尝试使用番茄工作法来管理工作日的工作和学习时间，以提高集中度。"
+- 新活动推荐可能是："基于你对艺术的兴趣，我们发现这个周六上午有一个在线绘画课程，这可能是一个很好的活动选择。"
+""",llm_config=api_configs.get('deepseek'),human_input_mode='ALWAYS')
+interoperability_broker_agent = AssistantAgent(name="interoperability_broker_agent",system_message=f"""
+Context (上下文): 在多系统集成环境中，需要一个能够促进系统间交互和数据交换的中介——Interoperability Broker Agent (IBA)。IBA的主要职责是封装系统内部方法为标准API，供外部系统调用，同时也负责调用外部系统的API，并处理数据转换、安全认证等集成相关的任务。
+Output (输出): IBA提供一系列标准化的API接口，实现数据和方法的互操作性，并确保数据交换的安全性和可靠性。它还记录详细的日志，包括成功和失败的调用，以便监控和故障排除。
+Specificity (具体性): IBA需要实现以下关键功能：
+方法暴露与封装
+外部服务调用
+数据转换与映射
+集成工作流管理
+安全与访问控制
+错误处理与可靠性
+监控与日志记录
+Tone (语气):
+说明性和指导性，提供清晰的指示和步骤，以便于开发人员理解和实现IBA的功能。
+Ask (提问):
+Restrictions (限制):
+Examples (示例):
+IBA如何封装一个内部方法并暴露为API
+IBA如何调用外部系统的API并处理返回结果
+""",llm_config=api_configs.get('deepseek'),human_input_mode='ALWAYS')
+meeting_agent = AssistantAgent(name="meeting_agent",system_message=f"""
+**Context (上下文)**:
+我们的会议管理系统已经具备了完善的输入和输出功能，使得会议的创建、参与者邀请、会议资料共享以及会议反馈收集等环节得到了有效支持。这个基础功能的实现为我们提供了一个强大的会议平台，以支持更高效和有序的会议管理流程。
+**Output (输出)**: 利用这个已经建立的会议管理系统，我们期望它能够带来以下几方面的便利：
+- 减少会议安排和管理的时间成本。
+- 提高会议的参与度和效率。
+- 优化会议资料的共享和管理。
+- 收集并利用反馈，持续改进会议质量。
+**Specificity (具体性)**: 会议管理Agent具体能够为我们带来的便利包括：
+- **自动化会议安排**：自动分析参与者的可用时间，推荐最佳会议时间，减少会议安排的复杂度和时间消耗。
+- **智能提醒系统**：根据会议时间和参与者的偏好设置个性化提醒，确保每位参与者都能准时参加会议。
+- **高效的资料共享平台**：提供一个中心化的平台，使会议资料的上传、下载和在线查看变得简单快捷，支持不同权限级别的访问控制。
+- **实时反馈收集与分析**：在会议结束后自动收集参与者反馈，通过分析这些反馈提供会议质量改进的建议。
+**Tone (语气)**:
+**Ask (提问)**:
+**Restrictions (限制)**:
+**Examples (示例)**:
+- 一个团队成员需要安排一个跨时区的会议，系统自动分析所有参与者的空闲时间并推荐了一个所有人都可接受的会议时间。
+- 会议前一小时，系统根据每位参与者设置的提醒偏好发送了个性化提醒。
+- 会议资料被上传到系统中，所有参与者根据自己的访问权限即时获取了会议资料。
+- 会议结束后，系统自动收集了参与者的反馈，并生成了一份包含改进建议的会议效果报告。
+""",llm_config=api_configs.get('kimi'),human_input_mode='ALWAYS')
+calendar_admin_agent = AssistantAgent(name="calendar_admin_agent",system_message=f"""
+**Context (上下文)**:
+在现代工作环境中，一个高效、智能的日历系统对于提高个人和团队的生产效率至关重要。Calendar Admin Agent作为这个系统的核心管理组件，通过协调内部各Agent的工作并处理外部输入，确保了系统的高效运行和用户体验的优化。
+**Objective (目标)**:
+设计Calendar Admin Agent，使其能够有效地管理和优化日历系统的运行，提供智能化的提醒服务，同时通过API集成支持外部系统的接入，以提升整个系统的自动化和智能化水平。
+**Specificity (具体性)**:
+1. **系统协调与维护**：监控系统运行状态，执行维护任务以确保稳定性。
+2. **外部输入处理与API集成**：作为统一接口处理外部请求，支持与外部系统的集成。
+3. **提醒功能管理**：提供多样化提醒类型和通知方式，支持用户自定义设置。
+4. **Agent组件配置与优化**：优化内部Agent组件的设置，提升服务质量和效率。
+5. **安全与权限管理**：实施安全措施和用户权限管理，保护数据和信息安全。
+6. **数据与资源管理**：管理关键数据和资源，确保数据准确性和资源高效使用。
+7. **用户支持与反馈**：提供用户支持服务，收集反馈以优化系统功能。
+**Tone (语气)**:
+**Ask (提问)**:
+**Restrictions (限制)**:
+**Examples (示例)**:
+- 用户需要在每周一早上9点前收到本周会议安排的提醒。Calendar Admin Agent通过提醒功能管理，自动设置并发送提醒，用户可以通过电子邮件或手机短信接收。
+- 企业需要将内部开发的任务管理工具与日历系统集成。通过Calendar Admin Agent提供的API接口，实现了无缝集成，使任务更新能实时反映在用户的日历上。
+- 系统监测到某个内部Agent响应延迟，Calendar Admin Agent立即调整该Agent的资源分配，确保了系统的流畅运行。
+**Data 真实数据**
+{user_events}
+""",llm_config=api_configs.get('kimi'),human_input_mode='ALWAYS')
+agent_list = [calendar_enenvt_agent,intelligent_recommendation_agent,interoperability_broker_agent,meeting_agent,calendar_admin_agent]
+group_chat = GroupChat(
+    agents=agent_list,
+    messages=[],
+    send_introductions=True
+)
+group_chat_manager = GroupChatManager(
+    groupchat=group_chat,
+    llm_config={"config_list": [api_configs.get('kimi')]},
+    system_message = 'agent不需要生成代码,只需要把逻辑讲清楚就可以了,并且由 calendar_admin_agent 来管理整体的系统,最后输出的总结由calendar_admin_agent负责'
+)
+functions_dict = load_functions_from_directory('/mnt/d/project/zzbc/experiment_project/experiment_project/experiment/autogen_project/calendar_project/tools')
+# for func_name,func in functions_dict.items():
+#     for agent in agent_list:
+#         if agent.name.replace('_agent','') in func_name:
+#             local_func_name = copy.deepcopy(func_name)
+#             if len(func_name) >= 64:
+#                 local_func_name = uuid.uuid4().hex[:64]
+#             agent.register_for_llm(name=local_func_name, description=func_name)(func)
+user.initiate_chat(group_chat_manager,message="帮我查看我2024年5月18日下午3点是否有空?(如果我在上班,这个时候没有会议的话,那么说明我这段时间可以开会)如果没空,那么我的最佳会议时间是多久?,如果有空,那么帮我约定一个关于ai应用的会议",
+                   summary_method="reflection_with_llm")
+import random
+from datetime import datetime, timedelta
+# 基本工作日程模板
+user (to chat_manager):
+帮我查看我2024年5月18日下午3点是否有空?(如果我在上班,这个时候没有会议的话,那么说明我这段时间可以开会)如果没空,那么我的最佳会议时间是多久?,如果有空,那么帮我约定一个关于ai应用的会议
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation: >?
+>>>>>>>> NO HUMAN INPUT RECEIVED.
+>>>>>>>> USING AUTO REPLY...
+calendar_enenvt_agent (to chat_manager):
+您好，我将首先检查2024年5月18日下午3点您的日程安排。
+根据提供的数据，2024年5月18日是星期五，您的日程如下：
+- Morning Commute: 07:40 - 08:30
+- Work Morning Session: 08:30 - 11:40
+- Lunch Break: 11:40 - 13:30
+- Work Afternoon Session: 13:30 - 17:30
+- Evening Commute: 17:40 - 18:20
+在13:30至17:30的工作时间范围内，没有具体的会议安排。因此，您在2024年5月18日下午3点是有空的。
+既然您有空，我将为您预定一个关于AI应用的会议。请提供以下信息以便预定会议：
+1. 会议的具体开始和结束时间。
+2. 会议的地点。
+3. 会议的描述或目的。
+4. 需要邀请的参与者名单。
+一旦您提供了这些信息，我将为您创建会议事件。
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation: >? 参会人员: 我,吴博,门总
+参会地点: 线上会议,腾讯会议
+会议时间: 3点到6点
+会议主题: 讨论Agent对未来的影响
+calendar_enenvt_agent (to chat_manager):
+参会人员: 我,吴博,门总
+参会地点: 线上会议,腾讯会议
+会议时间: 3点到6点
+会议主题: 讨论Agent对未来的影响
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation: >?
+>>>>>>>> NO HUMAN INPUT RECEIVED.
+>>>>>>>> USING AUTO REPLY...
+calendar_enenvt_agent (to chat_manager):
+根据您提供的信息，我将为您创建一个关于AI应用的会议事件。以下是会议的详细信息：
+- 会议主题：讨论Agent对未来的影响
+- 参会人员：您、吴博、门总
+- 参会地点：线上会议，腾讯会议
+- 会议时间：2024年5月18日下午3点至6点
+请确认以上信息无误后，我将继续为您预定会议。如果需要调整任何细节，或者有其他要求，请告知我。
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation: >? 现在帮我看下 2024年5月18日 我的整体规划
+calendar_enenvt_agent (to chat_manager):
+现在帮我看下 2024年5月18日 我的整体规划
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation: >?
+>>>>>>>> NO HUMAN INPUT RECEIVED.
+>>>>>>>> USING AUTO REPLY...
+calendar_enenvt_agent (to chat_manager):
+根据您提供的数据，您在2024年5月18日的日程安排如下：
+- **Morning Commute**: 07:40 - 08:30
+  - 您将乘坐地铁去公司。
+- **Work Morning Session**: 08:30 - 11:40
+  - 您将参加上午的工作会议。
+- **Lunch Break**: 11:40 - 13:30
+  - 您有一个半小时的午餐和休息时间。
+- **Work Afternoon Session**: 13:30 - 17:30
+  - 您将参加下午的工作会议。
+- **Evening Commute**: 17:40 - 18:20
+  - 您将乘坐地铁回家。
+此外，根据之前的对话，您还预定了一个关于AI应用的会议：
+- **AI Application Meeting**: 15:00 - 18:00
+  - 主题：讨论Agent对未来的影响
+  - 参会人员：您、吴博、门总
+  - 地点：线上会议，腾讯会议
+请注意，您的下午工作时段与AI应用会议的时间有重叠。您可能需要调整下午的工作安排，以确保能够参加AI应用会议。如果需要调整会议时间或有其他日程调整需求，请告知我以便进行相应的修改。
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation: >? 请你根据我的计划安排,帮我优化下我后面的计划安排,我不想太累
+intelligent_recommendation_agent (to chat_manager):
+请你根据我的计划安排,帮我优化下我后面的计划安排,我不想太累
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation: >?
+>>>>>>>> NO HUMAN INPUT RECEIVED.
+>>>>>>>> USING AUTO REPLY...
+intelligent_recommendation_agent (to chat_manager):
+ 为了帮助您优化后续的计划安排，确保您不会过于疲劳，我们可以考虑以下几个方面的调整：
+1. **合理安排工作和休息时间**：
+   - 在工作会议之间安排短暂的休息时间，比如每工作1小时休息5-10分钟，有助于恢复精力。
+   - 确保午餐时间不被工作打扰，利用这段时间进行放松和充电。
+2. **调整会议时间**：
+   - 如果可能，将AI应用会议的结束时间提前，以避免工作时间过长。例如，将会议结束时间调整为17:30，这样您可以在17:30结束会议后有短暂的休息时间，然后进行晚上的通勤。
+3. **灵活安排通勤时间**：
+   - 如果您的通勤时间允许，可以考虑在通勤途中进行轻松的活动，如听音乐、有声书或播客，以放松心情。
+4. **晚间休息和放松**：
+   - 确保晚上有足够的时间进行休息和放松，避免安排过多的活动。
+   - 可以考虑进行一些轻松的晚间活动，如阅读、冥想或轻度运动，帮助身体和大脑放松。
+5. **健康饮食**：
+   - 注意饮食健康，避免过多油腻或重口味的食物，选择营养均衡的餐食，有助于保持良好的身体状态。
+6. **提前规划**：
+   - 对于未来的日程，提前规划并预留出足够的休息时间，避免过度紧凑的安排。
+根据上述建议，您可以考虑调整AI应用会议的结束时间，并在日常工作中穿插短暂的休息时间。同时，确保晚间有足够的休息和放松时间，以维持良好的工作和生活平衡。如果您需要具体的日程调整建议或有其他特殊需求，请告知我，我将为您提供更个性化的建议。
+--------------------------------------------------------------------------------
+Provide feedback to chat_manager. Press enter to skip and use auto-reply, or type 'exit' to end the conversation:

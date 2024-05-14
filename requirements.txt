@@ -29,7 +29,7 @@ matrix-nio
 simplematrixbotlib
 
 # --------- distribute --------- #
-ray[default,server]==2.8.1
+ray[default,server]
 
 
 # --------- ai --------- #
@@ -62,3 +62,7 @@ pyyaml
 # --------- agent --------- #
 crewai[tools]
 pyautogen
+
+
+# --------- database --------- #
+# sqlite3
