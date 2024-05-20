@@ -53,13 +53,14 @@ user_proxy.register_for_execution(name='sqlite_select',)(select)
 assistant.register_for_llm(name='sqlite_insert_json_data', description="Iterates over the list of dictionaries, calling the insert function for each one to insert the records into the specified table.")(insert_json_data)
 user_proxy.register_for_execution(name='sqlite_insert_json_data',)(insert_json_data)
 task_list = [
-            "1, 生成一个人的4天的日历数据"
+            "1, 生成一个人的15天的日历数据"
             "2, 你需要先创建一个数据库(如果这个数据库不存在)"
             "3, 生成一个表名,查看表是否存在,如果不存在,则获取日历数据所有的列,作为表的列,生成一个创建表的sql语句,然后创建表."
             "4, 表创建过后可以将刚才的日历数据入库"
             "5, 从数据库中查询2024年5月15日到2024年5月17日所有的数据"
             "6, 查询数据完成后 结束任务"
             "db_file = /mnt/d/project/zzbc/experiment_project/experiment_project/experiment/output/func_tool.db"
+            "table_name = user_calendar"
     ]
 all_task = [{'recipient':assistant,"message":task,"clear_history":False,"summary_method": "reflection_with_llm"} for task in task_list ]
 
@@ -67,5 +68,5 @@ all_task = [{'recipient':assistant,"message":task,"clear_history":False,"summary
 result = user_proxy.initiate_chats(
 all_task
 )
-
-autogen.runtime_logging.stop()
+#
+# autogen.runtime_logging.stop()

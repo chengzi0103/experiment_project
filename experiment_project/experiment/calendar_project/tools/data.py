@@ -77,7 +77,7 @@ def generate_random_events(events_list, num_events=15):
 
 
 def create_user_event(days_num:int=15)->list:
-    random_personal_events = generate_random_events(personal_events, num_events=25)
+    random_personal_events = generate_random_events(personal_events, num_events=15)
 
     # 合并工作日程和个人活动到一个月的日程中
     # 创建一个月的日程
@@ -86,7 +86,6 @@ def create_user_event(days_num:int=15)->list:
     return monthly_schedule
 
     # 添加
-
 # 生成随机个人活动
+# x = create_user_event(15)
 
-# 打印结果（打印前10个事件作为示例）
