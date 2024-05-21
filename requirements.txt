@@ -71,3 +71,7 @@ faiss-cpu
 # --------- embedding --------- #
 sentence_transformers
 transformers
+
+
+# --------- dspy --------- #
+dspy-ai
