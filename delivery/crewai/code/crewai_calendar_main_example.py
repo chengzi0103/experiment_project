@@ -17,7 +17,7 @@ f'开始时间: start_time '
 f'结束时间: end_time '
 f'说明: description'
 """
-OpenAIGPT4 = ChatOpenAI(model_name="gpt-4o", temperature=0.7, openai_api_key="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")
+OpenAIGPT4 = ChatOpenAI(model_name="gpt-4o", temperature=0.7, openai_api_key="")
 tools = [select,insert_data_by_sql,insert_json_data,check_and_create_table,execute_sql,create_connection]
 db_file = '/mnt/d/project/zzbc/experiment_project/experiment_project/experiment/output/func_tool_crewai.db'
 table_name = 'user_calendar'

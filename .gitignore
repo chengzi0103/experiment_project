@@ -104,9 +104,8 @@ ENV/
 # IDE settings
 .vscode/
 .idea/
-tests/data/test_remote_func/run_db_job_subset/test_run_db_job_subset/input_data/0.feather
 poetry.lock
 .env.secret
 
 /.iml/
-.env_secret_config.yaml
+env_secret_config.yaml

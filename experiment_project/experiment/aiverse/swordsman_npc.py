@@ -5,13 +5,7 @@
 #
 # from extra.autogen.log_token import create_sqlite_db_name, load_log_token
 #
-# openai_llm_config = {"model": "gpt-4-turbo", "api_key": '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'}
-# zhipu_llm_config = {"model": "glm-4", "api_key": '094eaeab9c33bacde4365f834e4f259a.TGRRXWqpYE3FPyFx','base_url':'https://open.bigmodel.cn/api/paas/v4'}
-# yi_llm_config = {"model": "yi-34b-chat-0205", "api_key": '1f2808c63ec94c369999da6e3b13056c'
-#                  ,"base_url" :"https://api.lingyiwanwu.com/v1"}
-# deepseek_llm_config = {"model": "deepseek-chat", "api_key": 'sk-e64f21fb757148a59a8a2edc23094ab2'
-#                        ,'base_url' :'https://api.deepseek.com/v1'}
-#
+
 # log_db_name = create_sqlite_db_name()
 # logging_session_id = autogen.runtime_logging.start(config={"dbname": log_db_name})
 #

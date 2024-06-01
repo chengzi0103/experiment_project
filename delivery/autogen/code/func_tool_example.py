@@ -10,7 +10,7 @@ from experiment_project.utils.files.read import read_yaml
 log_db_name = create_sqlite_db_name()
 logging_session_id = autogen.runtime_logging.start(config={"dbname": log_db_name})
 
-secret_env_file = '/mnt/d/project/dy/extra/autogen/env_secret_config.yaml'
+secret_env_file = 'env_secret_config.yaml'
 api_configs = read_yaml(secret_env_file)
 assistant = AssistantAgent(
     name='assistant',
@@ -25,7 +25,7 @@ user_proxy = UserProxyAgent(
     human_input_mode='NEVER',
     is_termination_msg=lambda x: x.get("content", "") and "terminate" in x.get("content", "").lower(),
     code_execution_config={
-        "work_dir": "/mnt/d/project/zzbc/experiment_project/experiment_project/experiment/autogen_project/example/output",
+        "work_dir": "output",
         "use_docker": False
     },
     # llm_config=api_configs.get('kimi')

@@ -166,8 +166,6 @@ def generate_cypher(entities):
 
 qwen32b_api_url, qwen32b_key, qwen32b_model_name = 'http://127.0.0.1:11434/v1', 'EMPTY', 'qwen:32b'
 qwen14b_api_url, qwen14b_key, qwen14b_model_name = 'http://192.168.0.11:11434/v1', 'EMPTY', 'qwen:14b'
-# llama3_api_url, llama3_api_key, llama3_model_name = 'http://192.168.0.11:11434/v1', 'EMPTY', 'wangshenzhi/llama3-8b-chinese-chat-ollama-fp16:latest'
-# llama3_client, llama3_config = create_openai_client(llama3_api_url, llama3_api_key, llama3_model_name)
 qwen32b_client, qwen32b_config = create_openai_client(qwen32b_api_url, qwen32b_key, qwen32b_model_name)
 qwen14b_client, qwen14b_config = create_openai_client(qwen14b_api_url, qwen14b_key, qwen14b_model_name)
 qwen32b_config.temperature = 0.6

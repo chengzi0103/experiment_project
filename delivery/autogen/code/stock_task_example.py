@@ -4,8 +4,8 @@ from autogen import ConversableAgent,GroupChat,GroupChatManager
 from autogen.coding import LocalCommandLineCodeExecutor
 
 
-openai_llm_config = {"model": "gpt-4", "api_key": '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'}
-zhipu_llm_config = {"model": "glm-4", "api_key": '094eaeab9c33bacde4365f834e4f259a.TGRRXWqpYE3FPyFx','base_url':'https://open.bigmodel.cn/api/paas/v4'}
+openai_llm_config = {"model": "gpt-4", "api_key": ''}
+zhipu_llm_config = {"model": "glm-4", "api_key": '','base_url':'https://open.bigmodel.cn/api/paas/v4'}
 
 
 
