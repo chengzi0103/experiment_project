@@ -35,14 +35,13 @@ def split_doc_by_langchain(chuck_size: int = 1024, chuck_overlap: int = 0,
 
 
 def split_txt_by_langchain(chuck_size: int = 1024, chuck_overlap: int = 0,
-                           file_path: str = '/mnt/d/project/dy/extra/nlp/uie/三体1疯狂年代.txt') -> list[str]:
+                           file_path: str = '/mnt/d/project/dy/extra/nlp/uie/三体1疯狂年代.txt',encoding:str='utf-8') -> list[str]:
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=chuck_size,
         chunk_overlap=chuck_overlap,
         length_function=len,
     )
-
-    texts = text_splitter.split_text(read_text(file_path=file_path))
+    texts = text_splitter.split_text(read_text(file_path=file_path,encoding=))
     return texts
 
 def load_named_entity_with_llm(openai_clinent, openai_config, texts:str,named_entity_prompt_template:Union[None,str]=None):
