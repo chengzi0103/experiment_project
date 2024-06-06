@@ -1,0 +1,4 @@
+defaults:
+  - model: openai.yaml
+  - neo4j: default.yaml
+  - project: text_to_kg.yaml

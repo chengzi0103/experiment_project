@@ -1,0 +1,5 @@
+file_path: /mnt/c/Users/chenzi/Desktop/project/experiment_project/data/text_to_kg/三体1疯狂年代.txt
+entitie_optimized_file_path: /mnt/c/Users/chenzi/Desktop/project/experiment_project/data/text_to_kg/entitie_optimized_cot_openai.json
+proxy_url: http://192.168.31.215:10890
+encoding: gbk
+chunk_size: 520

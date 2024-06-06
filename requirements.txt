@@ -28,28 +28,26 @@ hydra-optuna-sweeper>=1.2.0
 matrix-nio
 simplematrixbotlib
 
-# --------- distribute --------- #
-ray[default,server]
 
+# --------- ai-tools --------- #
+langchain-openai
+langchain-community
 
 # --------- ai --------- #
 openai
 
 
 # --------- deploy --------- #
-ansible
+# ansible
 
 
-# --------- mastodon_robot --------- #
-Mastodon.py
+
 
 # --------- data --------- #
 numpy
 pandas
 polars
 
-# --------- spider --------- #
-BeautifulSoup4
 
 # --------- graph database --------- #
 neo4j
@@ -75,3 +73,5 @@ transformers
 
 # --------- dspy --------- #
 dspy-ai
+
+

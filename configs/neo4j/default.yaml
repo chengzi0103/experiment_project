@@ -1,0 +1,3 @@
+neo4j_uri: bolt://192.168.31.215:7687
+neo4j_user_name: cc
+neo4j_password:
