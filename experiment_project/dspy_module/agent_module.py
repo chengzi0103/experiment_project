@@ -23,15 +23,18 @@ class SelfRefineModule(dspy.Module):
         self.temperature = temperature
         if feedback_prompt is None:
             feedback_backstory = """ """
-            self.feedback_prompt = f'你是一个内容评估助手.根据问题和答案评估内容在完整性、准确性、相关性、清晰度和用户满意度方面的表现。 给出自己的建议 (建议要简单、明了、指明方向). 回答只包含建议就可以了 {feedback_backstory}'
+            # self.feedback_prompt = f'你是一个内容评估助手.根据问题和答案评估内容在完整性、准确性、相关性、清晰度和用户满意度方面的表现。 给出自己的建议 (建议要简单、明了、指明方向). 回答只包含建议就可以了 {feedback_backstory}'
+            self.feedback_prompt = f'You are a content evaluation assistant. Evaluate the content based on completeness, accuracy, relevance, clarity, and user satisfaction. Provide your own suggestions (keep suggestions simple, clear, and directional). Only include the suggestions in your response. {feedback_backstory}'
         else:
             self.feedback_prompt = feedback_prompt
             # self.evaluation = init_base_signature(role=feedback_prompt,backstory=evaluation_backstory)
         if refinement_prompt is None:
-            self.refinement_prompt = '你是一个内容改进助手. 结合建议,对内容进行改进'
+            # self.refinement_prompt = '你是一个内容改进助手. 结合建议,对内容进行改进'
+            self.refinement_prompt = 'You are a content improvement assistant. Combine suggestions to improve the content.'
         else: self.refinement_prompt= refinement_prompt
         if stop_condition_prompt is None:
-            self.stop_condition_prompt = '你是一个任务检查判断助手. 根据问题和答案检查否达到任务预期的完整性、准确性、相关性、清晰度和用户满意度标准？'
+            # self.stop_condition_prompt = '你是一个任务检查判断助手. 根据问题和答案检查否达到任务预期的完整性、准确性、相关性、清晰度和用户满意度标准？'
+            self.stop_condition_prompt = 'You are a task evaluation assistant. Based on the question and answer, check if the task meets the standards of completeness, accuracy, relevance, clarity, and user satisfaction.'
         else:
             self.stop_condition_prompt = stop_condition_prompt
         self.predict = dspy.Predict(self_refine_signature)
@@ -78,20 +81,20 @@ class SelfRefineModule(dspy.Module):
                 answer = refinement_answer
         return answer
 
-from experiment_project.utils.initial.util import init_sys_env
-from experiment_project.utils.files.read import read_yaml
-import dspy
-
-init_sys_env()
-secret_env_file = '/mnt/d/project/zzbc/env_secret_config.yaml'
-
-api_configs = read_yaml(secret_env_file)
-
-model_config = api_configs.get('openai')
-turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=2048,api_key=model_config.get('api_key'))
-dspy.settings.configure(lm=turbo)
-
-base_signature = init_base_signature(role='我希望你担任影评人。您将撰写一篇引人入胜且富有创意的电影评论。你可以涵盖情节、主题和基调、表演和角色、导演、配乐、摄影、制作设计、特效、编辑、节奏、对话等主题。但最重要的方面是强调这部电影给你带来的感受。什么真正引起了你的共鸣。您也可以批评这部电影。')
-refine_module = SelfRefineModule(self_refine_signature=base_signature)
-result = refine_module.forward(question='openai中的temperature设置多少合适? 我需要在写作助手设置它')
+# from experiment_project.utils.initial.util import init_sys_env
+# from experiment_project.utils.files.read import read_yaml
+# import dspy
+#
+# init_sys_env()
+# secret_env_file = '/mnt/d/project/zzbc/env_secret_config.yaml'
+#
+# api_configs = read_yaml(secret_env_file)
+#
+# model_config = api_configs.get('openai')
+# turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=2048,api_key=model_config.get('api_key'))
+# dspy.settings.configure(lm=turbo)
+#
+# base_signature = init_base_signature(role='我希望你担任影评人。您将撰写一篇引人入胜且富有创意的电影评论。你可以涵盖情节、主题和基调、表演和角色、导演、配乐、摄影、制作设计、特效、编辑、节奏、对话等主题。但最重要的方面是强调这部电影给你带来的感受。什么真正引起了你的共鸣。您也可以批评这部电影。')
+# refine_module = SelfRefineModule(self_refine_signature=base_signature)
+# result = refine_module.forward(question='openai中的temperature设置多少合适? 我需要在写作助手设置它')
 
