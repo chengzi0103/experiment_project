@@ -1,0 +1,37 @@
+nodes:
+  - id: loader
+    custom:
+      source: loader/reasoning_loader.py
+      inputs:
+        tick: dora/timer/secs/1
+      outputs:
+        - proxy_url
+        - prefix
+        - role
+        - backstory
+        - task
+        - model_api_key
+        - model_name
+        - model_max_tokens
+
+  - id: agents
+    custom:
+      source: agents/reasoning_agent.py
+      inputs:
+        proxy_url: loader/proxy_url
+        prefix: loader/prefix
+        role: loader/role
+        backstory: loader/backstory
+        task: loader/task
+        model_api_key: loader/model_api_key
+        model_name: loader/model_name
+        model_max_tokens: loader/model_max_tokens
+      outputs:
+        - result
+  - id: listener
+    custom:
+      source: listener/result.py
+      inputs:
+        result: agents/reasoning_agent
+
+

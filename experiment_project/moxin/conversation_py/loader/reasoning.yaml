@@ -1,0 +1,48 @@
+AGENT:
+  PROXY_URL: http://192.168.0.75:10809
+  PREFIX: null
+  ROLE: 你是AI助手
+  BACKSTORY: null
+  TASK: 如何解决鸡兔同笼的问题?
+MODEL:
+  MODEL_API_KEY:
+  MODEL_NAME: gpt-4o
+  MODEL_MAX_TOKENS: 2048
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
