@@ -1,0 +1,14 @@
+nodes:
+  - id: talker
+    custom:
+      source: talker/talker.py
+      inputs:
+        tick: dora/timer/secs/1
+      outputs:
+        - speech
+
+  - id: listener
+    custom:
+      source: listener/listener.py
+      inputs:
+        speech: talker/speech

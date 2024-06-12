@@ -1,0 +1,37 @@
+{
+  "prog": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f\u54ea\u91cc\uff1f",
+        "rationale": "produce the answer. We need to identify the capital city of China. The capital city is the political, cultural, and historical center of the country. The capital of China is Beijing.",
+        "answer": "\u5317\u4eac"
+      },
+      {
+        "augmented": true,
+        "question": "\u300a\u7ea2\u697c\u68a6\u300b\u7684\u4f5c\u8005\u662f\u8c01\uff1f",
+        "rationale": "Reasoning: Let's think step by step in order to produce the answer. We need to identify the author of the classic Chinese novel \u300a\u7ea2\u697c\u68a6\u300b. This novel is one of the Four Great Classical Novels of Chinese literature and was written during the Qing dynasty. The author is widely recognized as Cao Xueqin.",
+        "answer": "\u66f9\u96ea\u82b9"
+      },
+      {
+        "augmented": true,
+        "question": "\u592a\u9633\u7cfb\u4e2d\u6700\u5927\u7684\u884c\u661f\u662f\u4ec0\u4e48\uff1f",
+        "rationale": "produce the answer. We need to identify the largest planet in the solar system by its size and mass. The largest planet in the solar system is Jupiter, which is significantly larger than all the other planets.",
+        "answer": "\u6728\u661f"
+      },
+      {
+        "augmented": true,
+        "question": "\u8499\u5a1c\u4e3d\u838e\u7684\u753b\u5bb6\u662f\u8c01\uff1f",
+        "rationale": "produce the answer. We need to identify the artist who painted the famous artwork \"Mona Lisa.\" The \"Mona Lisa\" is a renowned portrait painting that was created during the Renaissance period. The artist who painted this masterpiece is Leonardo da Vinci.",
+        "answer": "\u8fbe\u82ac\u5947"
+      }
+    ],
+    "signature_instructions": "Given the fields `question`, produce the fields `answer`.",
+    "signature_prefix": "Answer:",
+    "extended_signature_instructions": "Given the fields `question`, produce the fields `answer`.",
+    "extended_signature_prefix": "Answer:"
+  }
+}
