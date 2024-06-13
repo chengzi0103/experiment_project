@@ -1,0 +1,7 @@
+- id: loader
+  custom:
+    source: ./reasoning_loader.py
+    inputs:
+      direction: dora/timer/secs/1
+    outputs:
+      - agent_config

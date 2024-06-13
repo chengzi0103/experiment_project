@@ -39,3 +39,10 @@ embeddings = outputs.last_hidden_state[:, 0]
 embeddings = F.normalize(embeddings, p=2, dim=1)
 scores = (embeddings[:1] @ embeddings[1:].T) * 100
 print(scores.tolist())
+
+
+import whisper
+
+model = whisper.load_model("/mnt/d/download/ggml-medium_1.bin")
+result = model.transcribe("audio.mp3")
+print(result["text"])

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/mnt/d/project/zzbc/experiment_project/experiment_project/moxin/dataflow2/object_detection.py", line 9, in <module>
+    import pyarrow as pa
+  File "/home/cc/miniconda/envs/agent_py11/lib/python3.11/site-packages/pyarrow/__init__.py", line 65, in <module>
+    import pyarrow.lib as _lib
+ImportError: /home/cc/miniconda/envs/agent_py11/bin/../lib/libstdc++.so.6: version `GLIBCXX_3.4.22' not found (required by /home/cc/miniconda/envs/agent_py11/lib/python3.11/site-packages/pyarrow/libarrow_acero.so.1600)

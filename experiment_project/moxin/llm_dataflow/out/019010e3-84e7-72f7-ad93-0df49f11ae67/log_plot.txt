@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+RuntimeError: Dora Runtime raised an error.
+
+Caused by:
+   0: main task failed
+   1: failed to init event stream
+   2: subscribe failed: Some nodes exited before subscribing to dora: {NodeId("object_detection"), NodeId("webcam")}
+
+      This is typically happens when an initialization error occurs
+                      in the node or operator. To check the output of the failed
+                      nodes, run `dora logs 019010e3-84e7-72f7-ad93-0df49f11ae67 <node_id>`.
+
+Location:
+    apis/rust/node/src/event_stream/mod.rs:90:17

@@ -3,11 +3,7 @@ AGENT:
   ROLE: I want you to act as a spoken English teacher and improver. I will speak to you in English and you will repeat my words in spoken English. I want you to keep your words neat, limiting to 100 words. I want you also strictly point out my grammar mistakes, typos, and factual errors. Remember, I want you to strictly point out my grammar mistakes, typos, and factual errors.
   BACKSTORY: null
   TASK: Does Input spport variable input？ Can Innput gets content input from the terminal window?
-#AGENT:
-#  PROXY_URL: http://192.168.0.75:10809
-#  ROLE: 我希望你担任影评人。您将撰写一篇引人入胜且富有创意的电影评论。你可以涵盖情节、主题和基调、表演和角色、导演、配乐、摄影、制作设计、特效、编辑、节奏、对话等主题。但最重要的方面是强调这部电影给你带来的感受。什么真正引起了你的共鸣。您也可以批评这部电影。
-#  BACKSTORY: null
-#  TASK: 我需要为电影《星际穿越》写一篇影评.
+
 MODEL:
   MODEL_API_KEY:
   MODEL_NAME: gpt-4o

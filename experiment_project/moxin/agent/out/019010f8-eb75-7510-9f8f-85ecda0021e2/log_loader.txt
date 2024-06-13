@@ -1,0 +1,5 @@
+请输入你的内容:   Traceback (most recent call last):
+  File "/mnt/d/project/zzbc/experiment_project/experiment_project/moxin/agent/reasoning_loader.py", line 6, in <module>
+    x = input('请输入你的内容:   ')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line

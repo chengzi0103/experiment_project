@@ -97,4 +97,4 @@ class SelfRefineModule(dspy.Module):
 # base_signature = init_base_signature(role='我希望你担任影评人。您将撰写一篇引人入胜且富有创意的电影评论。你可以涵盖情节、主题和基调、表演和角色、导演、配乐、摄影、制作设计、特效、编辑、节奏、对话等主题。但最重要的方面是强调这部电影给你带来的感受。什么真正引起了你的共鸣。您也可以批评这部电影。')
 # refine_module = SelfRefineModule(self_refine_signature=base_signature)
 # result = refine_module.forward(question='openai中的temperature设置多少合适? 我需要在写作助手设置它')
-
+#

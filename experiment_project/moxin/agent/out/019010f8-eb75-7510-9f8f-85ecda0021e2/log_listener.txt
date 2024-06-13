@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/mnt/d/project/zzbc/experiment_project/experiment_project/moxin/agent/result.py", line 4, in <module>
+    node = Node()
+           ^^^^^^
+RuntimeError: failed to init event stream
+
+Caused by:
+    subscribe failed: Some nodes exited before subscribing to dora: {NodeId("agents"), NodeId("loader")}
+
+    This is typically happens when an initialization error occurs
+                    in the node or operator. To check the output of the failed
+                    nodes, run `dora logs 019010f8-eb75-7510-9f8f-85ecda0021e2 <node_id>`.
+
+Location:
+    apis/rust/node/src/event_stream/mod.rs:90:17

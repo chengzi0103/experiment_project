@@ -47,7 +47,6 @@ if event["type"] == "INPUT":
     print(f'完成llm问题回答: {result}')
     node.send_output("result", pa.array([result]))  # add this line
 
-#
 
 
 
