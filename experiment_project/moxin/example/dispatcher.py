@@ -14,8 +14,8 @@ class Operator:
             if dora_event["id"] == "task_one_loop_num":
                 print('task-one 任务结束,开始触发task-two任务')
                 send_output('run_task_num', pa.array([json.dumps('2')]), dora_event['metadata'])
-
-            if dora_event["id"] == "task_one_loop_num":
+                return DoraStatus.CONTINUE
+            if dora_event["id"] == "task_two_loop_num":
                 print('task-two任务结束')
                 return DoraStatus.STOP
             if dora_event["id"] == "direction":

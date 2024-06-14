@@ -1,11 +1,5 @@
 nodes:
-  - id: run
-    operator:
-      python: talker.py
-      inputs:
-        direction: dora/timer/secs/1
-      outputs:
-        - run
+
   - id: dispatcher
     operator:
       python: dispatcher.py
@@ -15,6 +9,13 @@ nodes:
         task_two_loop_num: task_two/task_two_loop_num
       outputs:
         - run_task_num
+  - id: run
+    operator:
+      python: talker.py
+      inputs:
+        direction: dora/timer/secs/1
+      outputs:
+        - run
   - id: task_one
     operator:
       python: task_one.py

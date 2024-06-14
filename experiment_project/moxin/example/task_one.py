@@ -17,4 +17,4 @@ class Operator:
                     send_output('task_one_loop_num',pa.array(['task_one']),dora_event['metadata'])
                     return DoraStatus.CONTINUE
 
-        return DoraStatus.STOP
+        return DoraStatus.CONTINUE
