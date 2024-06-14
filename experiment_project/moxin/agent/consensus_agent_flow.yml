@@ -1,0 +1,31 @@
+nodes:
+  - id: loader
+    operator:
+      python: custom_agent_generate.py
+      inputs:
+        direction: dora/timer/secs/1
+        output_result: listener/output_result
+      outputs:
+        - agent_config
+  - id: reasoner_agent
+    custom:
+      source: ./reasoning_agent.py
+      inputs:
+        agent_config: loader/agent_config
+      outputs:
+        - reasoner_result
+  - id: selfrefine_agent
+    custom:
+      source: ./selfrefine_agent.py
+      inputs:
+        result: loader/agent_config
+      outputs:
+        - selfrefine_result
+  - id: listener
+    operator:
+      python: result.py
+      inputs:
+        reasoner_result: reasoner_agent/reasoner_result
+        selfrefine_result: selfrefine_agent/selfrefine_result
+      outputs:
+        - output_result

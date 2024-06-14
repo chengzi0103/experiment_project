@@ -29,21 +29,21 @@ while time.time() - start < 10:
         frame = cv2.imread(image_path)
         ret = True
         # ret, frame = video_capture.read()
-        if not ret:
-            frame = np.zeros((CAMERA_HEIGHT, CAMERA_WIDTH, 3), dtype=np.uint8)
-            cv2.putText(
-                frame,
-                "No Webcam was found at index %d" % (CAMERA_INDEX),
-                (int(30), int(30)),
-                font,
-                0.75,
-                (255, 255, 255),
-                2,
-                1,
-            )
+        # if not ret:
+        #     frame = np.zeros((CAMERA_HEIGHT, CAMERA_WIDTH, 3), dtype=np.uint8)
+        #     cv2.putText(
+        #         frame,
+        #         "No Webcam was found at index %d" % (CAMERA_INDEX),
+        #         (int(30), int(30)),
+        #         font,
+        #         0.75,
+        #         (255, 255, 255),
+        #         2,
+        #         1,
+        #     )
         node.send_output(
             "image",
-            cv2.imencode(".jpg", frame)[1].tobytes(),
+            cv2.imencode(".png", frame)[1].tobytes(),
             event["metadata"],
         )
     elif event_type == "STOP":

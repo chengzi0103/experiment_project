@@ -1,11 +1,43 @@
-from dora import Node
+# from dora import Node
+# import pyarrow as pa
+#
+# node = Node()
+#
+# event = node.next()
+# if event["type"] == "INPUT":
+#     message = event["value"][0].as_py()
+#     print(
+#         f"""Result:  {message}"""
+#     )
+
+
+from dora import Node, DoraStatus
 import pyarrow as pa
 
-node = Node()
+from experiment_project.utils.date.util import now_time
 
-event = node.next()
-if event["type"] == "INPUT":
-    message = event["value"][0].as_py()
-    print(
-        f"""Result:  {message}"""
-    )
+
+class Operator:
+    def on_event( self,
+        dora_event,
+        send_output,)->DoraStatus:
+
+        if dora_event["type"] == "INPUT":
+            print('当前刷新时间: ',now_time())
+            if dora_event["id"] == 'reasoner_result':
+                print(f'这是 reasoner_result的result : {dora_event["value"].to_pylist()}')
+            elif dora_event["id"] == 'selfrefine_result':
+                print(f'这是 selfrefine_result的result  {dora_event["value"].to_pylist()}')
+
+        send_output('output_result',pa.array(['This is Output Loader ']),dora_event['metadata'])
+        return DoraStatus.CONTINUE
+# event = node.next()
+# if event["type"] == "INPUT":
+#     message = event["value"][0].as_py()
+#     id = event["id"]
+#     print('id: ',id)
+#     print('---------------------')
+#     print(
+#         f"""Result:  {message}"""
+#
+#     )

@@ -41,22 +41,22 @@ class Operator:
                 frame = cv2.resize(frame, (CAMERA_WIDTH, CAMERA_HEIGHT))
                 self.failure_count = 0
             ## Push an error image in case the camera is not available.
-            else:
-                if self.failure_count > 10:
-                    frame = np.zeros((CAMERA_HEIGHT, CAMERA_WIDTH, 3), dtype=np.uint8)
-                    cv2.putText(
-                        frame,
-                        "No Webcam was found at index %d" % (CAMERA_INDEX),
-                        (int(30), int(30)),
-                        font,
-                        0.75,
-                        (255, 255, 255),
-                        2,
-                        1,
-                    )
-                else:
-                    self.failure_count += 1
-                    return DoraStatus.CONTINUE
+            # else:
+            #     if self.failure_count > 10:
+            #         frame = np.zeros((CAMERA_HEIGHT, CAMERA_WIDTH, 3), dtype=np.uint8)
+            #         cv2.putText(
+            #             frame,
+            #             "No Webcam was found at index %d" % (CAMERA_INDEX),
+            #             (int(30), int(30)),
+            #             font,
+            #             0.75,
+            #             (255, 255, 255),
+            #             2,
+            #             1,
+            #         )
+            #     else:
+            #         self.failure_count += 1
+            #         return DoraStatus.CONTINUE
 
             send_output(
                 "image",
@@ -73,5 +73,5 @@ class Operator:
         else:
             return DoraStatus.STOP
 
-    def __del__(self):
-        self.video_capture.release()
+    # def __del__(self):
+    #     self.video_capture.release()

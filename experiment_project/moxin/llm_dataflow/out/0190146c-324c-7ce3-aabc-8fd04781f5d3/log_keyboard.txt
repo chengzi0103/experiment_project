@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/d/project/zzbc/experiment_project/experiment_project/moxin/llm_dataflow/keyboard_op.py", line 21, in <module>
+    buffer_text += dora_event["value"][0].as_py()
+                   ~~~~~~~~~~~~~~~~~~~^^^
+  File "pyarrow/array.pxi", line 1386, in pyarrow.lib.Array.__getitem__
+  File "pyarrow/array.pxi", line 581, in pyarrow.lib._normalize_index
+IndexError: index out of bounds

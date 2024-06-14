@@ -1,0 +1,3 @@
+Numeric mode unsupported in the posix collation implementation
+Numeric mode unsupported in the posix collation implementation
+Numeric mode unsupported in the posix collation implementation

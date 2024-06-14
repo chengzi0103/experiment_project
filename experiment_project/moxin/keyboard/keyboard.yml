@@ -1,0 +1,37 @@
+nodes:
+  - id: send
+    custom:
+      source: send.py
+      inputs:
+        tick: dora/timer/millis/50
+      outputs:
+          - recording
+  - id: keyboard
+    custom:
+      source: keyboard_example.py
+      outputs:
+        - buffer
+        - submitted
+        - record
+        - ask
+        - send
+        - change
+      inputs:
+        recording: send/recording
+#        tick: dora/timer/millis/50
+  - id: listener_one
+    custom:
+      source: listeners.py
+      inputs:
+        buffer: keyboard/buffer
+        submitted: keyboard/submitted
+        ask: keyboard/ask
+
+  - id: listener_two
+    custom:
+      source: listeners.py
+      inputs:
+        buffer: keyboard/buffer
+        submitted: keyboard/submitted
+        ask: keyboard/ask
+

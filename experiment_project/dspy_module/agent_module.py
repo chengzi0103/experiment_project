@@ -3,7 +3,8 @@ from typing import Union
 
 import dspy
 
-from experiment_project.dspy_module.agent_signature import init_base_signature, init_multiple_inputs_signature
+from experiment_project.dspy_module.agent_signature import init_base_signature, init_multiple_inputs_signature, \
+    init_consensus_signature
 
 
 class ReasoningModule(dspy.Module):
@@ -80,6 +81,26 @@ class SelfRefineModule(dspy.Module):
             else:
                 answer = refinement_answer
         return answer
+
+
+
+class ConsensusModule(dspy.Module):
+    def __init__(self, consensus_signature:Union[ dspy.Signature,None]=None, temperature:float=0.7):
+        super().__init__()
+        if consensus_signature is None:
+            self.consensus_signature = init_consensus_signature()
+        self.predict = dspy.Predict(consensus_signature)
+        self.temperature = temperature
+
+    @property
+    def no_cache(self):
+        return dict(temperature=self.temperature + 0.0001 * random.uniform(-1, 1))
+
+    def forward(self, question:str,contexts:list[str]):
+        answer = self.predict(question=question,contexts=contexts,**self.no_cache).answer
+        return answer
+
+
 
 # from experiment_project.utils.initial.util import init_sys_env
 # from experiment_project.utils.files.read import read_yaml

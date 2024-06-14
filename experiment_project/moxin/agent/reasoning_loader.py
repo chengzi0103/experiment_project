@@ -8,6 +8,7 @@ node = Node()
 
 params = read_yaml('selfrefine_config.yml')
 model_config,agent_config = params['MODEL'],params['AGENT']
+
 event = node.next()
 if event["type"] == "INPUT":
     config = {}
