@@ -1,2 +1,0 @@
-received unexpected event: INPUT_CLOSED
-received unexpected event: INPUT_CLOSED

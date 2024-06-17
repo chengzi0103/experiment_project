@@ -3,11 +3,15 @@ from typing import Union
 
 import dspy
 
-from experiment_project.dspy_module.agent_signature import init_base_signature, init_multiple_inputs_signature, \
+from experiment_project.agents.dspy_module.base_signature import init_multiple_inputs_signature, init_base_signature, \
     init_consensus_signature
 
 
-class ReasoningModule(dspy.Module):
+# from experiment_project.dspy_module.agent_signature import init_base_signature, init_multiple_inputs_signature, \
+#     init_consensus_signature
+
+
+class ReasonerModule(dspy.Module):
     def __init__(self,reasoning_signature: dspy.Signature):
         super().__init__()
         self.prog = dspy.Predict(reasoning_signature)

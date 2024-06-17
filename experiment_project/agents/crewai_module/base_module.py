@@ -18,7 +18,7 @@ def create_task(description: str, expected_output: str, agent: Agent,max_inter:i
         description=description,
         expected_output=expected_output,
         agent=agent,
-        human_input=False,
+        human_input=False, # dora-input is not supported yet
     max_inter=max_inter
 
     )
