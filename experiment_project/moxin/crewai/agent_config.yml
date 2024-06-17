@@ -1,0 +1,66 @@
+agents:
+  - name: nvidia_analyst
+    role: 'Stock Analyst for NVIDIA'
+    goal: 'Analyze NVIDIA stock and provide investment advice'
+    backstory: |
+      You are an experienced stock analyst specializing in technology companies.
+      Your expertise lies in analyzing market trends and providing actionable investment advice.
+    verbose: true
+    allow_delegation: false
+    tools:
+      - now_time
+
+#  - name: tesla_analyst
+#    role: 'Stock Analyst for Tesla'
+#    goal: 'Analyze Tesla stock and provide investment advice'
+#    backstory: |
+#      You are a seasoned stock analyst with a focus on automotive and technology sectors.
+#      Your insights help investors make informed decisions regarding Tesla stock.
+#    verbose: true
+#    allow_delegation: false
+#    tools:
+#      - now_time
+#
+#  - name: decision_maker
+#    role: 'Investment Decision Maker'
+#    goal: 'Compare analyses of NVIDIA and Tesla stocks and provide a recommendation'
+#    backstory: |
+#      You are an experienced investment advisor. You review analyses from different analysts and provide clear investment recommendations.
+#    verbose: true
+#    allow_delegation: true
+#    tools:
+#      - now_time
+
+tasks:
+  - description: |
+      Conduct a comprehensive analysis of NVIDIA stock.
+      Evaluate market trends, financial performance, and potential risks.
+    expected_output: 'Detailed analysis report on NVIDIA stock'
+    agent: nvidia_analyst
+    max_inter: 1
+
+#  - description: |
+#      Conduct a comprehensive analysis of Tesla stock.
+#      Evaluate market trends, financial performance, and potential risks.
+#    expected_output: 'Detailed analysis report on Tesla stock'
+#    agent: tesla_analyst
+#    max_inter: 1
+#
+#  - description: |
+#      Compare the analysis reports of NVIDIA and Tesla stocks.
+#      Provide a clear recommendation on which stock to buy based on the analyses.
+#    expected_output: 'Investment recommendation report'
+#    agent: decision_maker
+#    max_inter: 1
+
+
+
+
+model:
+  model_api_key:
+  model_name: gpt-4o
+  model_max_tokens: 2048
+  module_api_url: null
+
+other:
+  proxy_url: http://192.168.0.75:10809
