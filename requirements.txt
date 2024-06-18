@@ -35,6 +35,7 @@ langchain-community
 
 # --------- ai --------- #
 openai
+duckduckgo-search
 
 
 # --------- deploy --------- #

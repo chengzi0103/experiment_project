@@ -1,0 +1,70 @@
+agents:
+  - name: stock_data_collector
+    role: 'Stock Data Collector'
+    goal: 'Collect and organize stock data for specified companies'
+    backstory: |
+      You are an experienced data collector specializing in extracting valuable stock data from various online sources.
+    verbose: true
+    allow_delegation: false
+    tools:
+      - DuckDuckGoSearchRun
+      - now_time
+      - stock_data
+
+  - name: stock_analyst
+    role: 'Stock Analyst'
+    goal: 'Analyze collected stock data and provide insights'
+    backstory: |
+      You are a seasoned stock analyst skilled in interpreting stock market data, identifying market trends, and providing investment advice.
+    verbose: true
+    allow_delegation: false
+    tools:
+      - DuckDuckGoSearchRun
+      - now_time
+      - stock_data
+
+  - name: investment_advisor
+    role: 'Investment Advisor'
+    goal: 'Provide clear investment recommendations based on analysis'
+    backstory: |
+      You are an experienced investment advisor focused on offering investment strategies and advice to clients.
+    verbose: true
+    allow_delegation: true
+    tools:
+      - DuckDuckGoSearchRun
+      - now_time
+      - stock_data
+
+tasks:
+  - description: |
+      First get the current time, Collect the latest stock data for NVIDIA and Tesla from the beginning of this year to the present, including prices, volumes, and market trends.
+    expected_output: 'Report containing all relevant collected data'
+    agent: stock_data_collector
+    max_inter: 15
+
+  - description: |
+      Analyze the collected stock data for NVIDIA and Tesla. Evaluate market trends, financial performance, and potential risks.
+    expected_output: 'Detailed analysis report'
+    agent: stock_analyst
+    max_inter: 15
+
+  - description: |
+      Based on the analysis reports, provide clear recommendations on whether to invest in NVIDIA and Tesla.
+    expected_output: 'Investment recommendation report'
+    agent: investment_advisor
+    max_inter: 15
+
+model:
+  model_api_key: 
+  model_name: gpt-4
+  model_max_tokens: 2048
+  module_api_url: null
+
+other:
+  proxy_url: http://192.168.0.75:10809
+
+env:
+  SERPER_API_KEY: 2e4d9ef16c251219c58cb2b04509d626e43b09c1
+
+crewai_config:
+  memory: true

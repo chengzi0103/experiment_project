@@ -13,21 +13,28 @@ def create_agent(role: str, goal: str, backstory: str, verbose: bool=True, allow
         tools=tools,
     )
 
-def create_task(description: str, expected_output: str, agent: Agent,max_inter:int=1) -> Task:
-    return Task(
+def create_task(description: str, agent: Agent, expected_output: str=None,max_inter:int=None) -> Task:
+    if expected_output is None:
+        expected_output = ''
+
+    task = Task(
         description=description,
         expected_output=expected_output,
         agent=agent,
         human_input=False, # dora-input is not supported yet
-    max_inter=max_inter
-
+        max_inter=max_inter
     )
+    return task
 
-def setup_crew(agents: List[Agent], tasks: List[Task], verbose: int=2) -> Crew:
+def setup_crew(agents: List[Agent], tasks: List[Task], verbose: int=2,process:str=None,memory:bool=False) -> Crew:
+    if process is None:
+        process = Process.sequential
+
     return Crew(
         agents=agents,
         tasks=tasks,
-        verbose=verbose
+        verbose=verbose,
+        process=process,memory=memory
     )
 
 def kickoff_crew(crew: Crew):
