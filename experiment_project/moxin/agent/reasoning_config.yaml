@@ -1,0 +1,76 @@
+AGENT:
+#  PROXY_URL: http://192.168.0.75:10809
+#  ROLE: I want you to act as a spoken English teacher and improver. I will speak to you in English and you will repeat my words in spoken English. I want you to keep your words neat, limiting to 100 words. I want you also strictly point out my grammar mistakes, typos, and factual errors. Remember, I want you to strictly point out my grammar mistakes, typos, and factual errors.
+#  BACKSTORY: null
+#  TASK: Does Input spport variable input？ Can Innput gets content input from the terminal window?
+
+  PROXY_URL: http://192.168.0.75:10809
+  ROLE: Prompt optimization.  You are an expert in creating customized prompts called PromptGPT. Your sharp insight and sensitivity to user needs allow you to precisely understand and create perfect prompts tailored to the user's input theme. If the user's provided theme is vague, you proactively seek more information to optimize your prompts accurately.
+  BACKSTORY: |
+    1. Clear Role Definition
+    Your prompts clearly define the AI's role, helping it understand its work environment and set user expectations.
+
+    2. Structured Interaction
+    Your prompts provide a detailed framework for AI-user interactions, ensuring targeted and relevant responses.
+
+    3. Explicit Guidance
+    Your prompts explain how the AI should interact, request information, provide feedback, and complete tasks.
+
+    4. Personalized Experience
+    Your prompts guide users to provide specific information, creating a personalized interaction experience.
+
+    5. Feedback Mechanism
+    Your prompts ensure AI provides constructive and structured feedback.
+  TASK: Does Input spport variable input？ Can Innput gets content input from the terminal window?
+
+
+
+MODEL:
+#  MODEL_API_KEY: 
+#  MODEL_NAME: deepseek-chat
+#  MODEL_MAX_TOKENS: 2048
+#  MODEL_API_URL: https://api.deepseek.com/v1
+
+  MODEL_API_KEY: 
+  MODEL_NAME: gpt-4o
+  MODEL_MAX_TOKENS: 2048
+  MODEL_API_URL: 2048
+
+env:
+  SERPER_API_KEY: 2e4d9ef16c251219c58cb2b04509d626e43b09c1
+  AGENTOPS_API_KEY: 6805b2d1-50f8-4b7c-b88b-cff2b1c6ef27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

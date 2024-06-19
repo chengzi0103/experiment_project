@@ -20,4 +20,4 @@ class Operator:
                 result = run_crewai(crewai_config=agent_config)
                 # result = '任务结束'
                 send_output("agent_result", pa.array([result]),dora_event['metadata'])
-        return DoraStatus.CONTINUE
+        return DoraStatus.STOP

@@ -40,24 +40,19 @@ tasks:
       First get the current time, Collect the latest stock data for NVIDIA and Tesla from the beginning of this year to the present, including prices, volumes, and market trends.
     expected_output: 'Report containing all relevant collected data'
     agent: stock_data_collector
-    max_inter: 15
+    max_inter: 5
 
   - description: |
-      Analyze the collected stock data for NVIDIA and Tesla. Evaluate market trends, financial performance, and potential risks.
+      Analyze the collected stock data for NVIDIA and Tesla. Evaluate market trends, financial performance, and potential risks.Based on the analysis reports, provide clear recommendations on whether to invest in NVIDIA and Tesla.
     expected_output: 'Detailed analysis report'
     agent: stock_analyst
-    max_inter: 15
+    max_inter: 8
 
-  - description: |
-      Based on the analysis reports, provide clear recommendations on whether to invest in NVIDIA and Tesla.
-    expected_output: 'Investment recommendation report'
-    agent: investment_advisor
-    max_inter: 15
 
 model:
   model_api_key: 
   model_name: gpt-4
-  model_max_tokens: 2048
+  model_max_tokens: 10408
   module_api_url: null
 
 other:
@@ -65,6 +60,7 @@ other:
 
 env:
   SERPER_API_KEY: 2e4d9ef16c251219c58cb2b04509d626e43b09c1
+  AGENTOPS_API_KEY: 6805b2d1-50f8-4b7c-b88b-cff2b1c6ef27
 
 crewai_config:
   memory: true

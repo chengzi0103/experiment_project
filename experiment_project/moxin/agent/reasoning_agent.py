@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from dora import Node
+
+import agentops
+from dora import Node, DoraStatus
 import dspy
 import pyarrow as pa
-from experiment_project.utils.initial.util import init_sys_env
+
+from experiment_project.agents.utils.util import init_agentops
+from experiment_project.utils.initial.util import init_sys_env, init_env
 import time
-node = Node()
 
 
 
@@ -18,38 +21,46 @@ class ReasoningModule(dspy.Module):
 
     def forward(self, question):
         return self.prog(question=question)
+class Operator:
+    def on_event(
+            self,
+            dora_event,
+            send_output,
+    ) -> DoraStatus:
+        if dora_event["type"] == "INPUT":
+            if dora_event['id'] == 'agent_config':
+                inputs = dora_event["value"][0].as_py()
+                inputs = json.loads(inputs)
+                # if 'reasoning' in inputs.get('agent_list') or 'reasoner' in inputs.get('agent_list'):
 
-event = node.next()
-if event["type"] == "INPUT":
-    inputs = event["value"][0].as_py()
-    inputs = json.loads(inputs)
-    if 'reasoning' in inputs.get('agent_list') or 'reasoner' in inputs.get('agent_list'):
+                if inputs.get('proxy_url', None) is not None:
 
-        if inputs.get('proxy_url', None) is not None:
-
-            init_sys_env(proxy_url=inputs.get('proxy_url', None))
-
-        turbo = dspy.OpenAI(model=inputs.get('model_name'), max_tokens=inputs.get('model_max_tokens'), api_key=inputs.get('model_api_key'))
-        dspy.settings.configure(lm=turbo)
-
-        class ReasoningSignature(dspy.Signature):
-
-            question = dspy.InputField()
-            answer = dspy.OutputField(desc='')
-            role = dspy.OutputField(desc=inputs.get('role', None))
-            backstory = dspy.OutputField(desc=inputs.get('backstory', None))
+                    init_sys_env(proxy_url=inputs.get('proxy_url', None))
+                if inputs.get('env', None) is not None: init_env(env=inputs['env'])
 
 
-        print(ReasoningSignature)
-        reasoning = ReasoningModule(reasoning_signature=ReasoningSignature)
-        task,result = inputs.get('task'),''
-        if task is not None:
-            result = reasoning.forward(question=task).answer
-        time.sleep(2)
-        result= 'reasoner_result'
-        print(f'完成llm问题回答: {result}')
-        node.send_output("reasoner_result", pa.array([result]))  # add this line
 
+                turbo = dspy.OpenAI(model=inputs.get('model_name'), max_tokens=inputs.get('model_max_tokens'), api_key=inputs.get('model_api_key'),api_base=inputs.get('model_api_url',None))
+                dspy.settings.configure(lm=turbo)
+                init_agentops(inputs['agentops_api_key'])
+                agentops.start_session()
+                class ReasoningSignature(dspy.Signature):
+
+                    question = dspy.InputField()
+                    answer = dspy.OutputField(desc='')
+                    role = dspy.OutputField(desc=inputs.get('role', None))
+                    backstory = dspy.OutputField(desc=inputs.get('backstory', None))
+
+
+                reasoning = ReasoningModule(reasoning_signature=ReasoningSignature)
+                task,result = inputs.get('task'),''
+                if task is not None:
+                    result = reasoning.forward(question=task).answer
+                print('result is  ',result)
+                agentops.end_session('Success Record Token ')
+                send_output("reasoner_result", pa.array([result]),dora_event['metadata'])  # add this line
+                return DoraStatus.STOP
+        return DoraStatus.CONTINUE
 
 
 

@@ -13,5 +13,5 @@ class Operator:
             if dora_event['id'] == 'agent_result':
                 input = dora_event["value"][0].as_py()
                 print(f'Crewai Agent Result: {input}')
-
+                return DoraStatus.STOP
         return DoraStatus.CONTINUE

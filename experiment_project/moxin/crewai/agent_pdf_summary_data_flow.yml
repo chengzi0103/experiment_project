@@ -1,0 +1,20 @@
+nodes:
+  - id: loader
+    operator:
+      python: loader_pdf.py
+      inputs:
+        direction: dora/timer/secs/1
+      outputs:
+        - agent_config
+  - id: run
+    operator:
+      python: agent.py
+      inputs:
+        agent_config: loader/agent_config
+      outputs:
+        - agent_result
+  - id: listener
+    operator:
+      python: listener.py
+      inputs:
+        agent_result: run/agent_result

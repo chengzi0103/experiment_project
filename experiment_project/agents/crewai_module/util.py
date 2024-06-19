@@ -16,7 +16,7 @@ def set_api_keys(
     if model_name:
         os.environ["OPENAI_MODEL_NAME"] = model_name
     if model_max_tokens:
-        os.environ["OPENAI_MAX_TOKENS"] = str(model_max_tokens)
+        os.environ["OPENAI_MAX_TOKENS"] = str(20480)
 
 def make_crewai_tool(func):
     tool.name = func.__name__

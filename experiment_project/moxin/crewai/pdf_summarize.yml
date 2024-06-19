@@ -1,0 +1,42 @@
+agents:
+  - name: pdf_summarize
+    role: 'Pdf Reader and Summarizer'
+    goal: 'Now I need to make a PDF reader to get the author s name, time, and main goal of the article'
+    backstory: |
+      Now I need to make a PDF reader to get the author's name, time, and main goal of the article
+    verbose: true
+    allow_delegation: false
+    tools:
+      - PDFSearchTool
+
+
+tasks:
+  - description: |      
+      pdf: ''
+      module_file: 'medium'
+      language: null
+      save_file: '/mnt/d/project/zzbc/experiment_project/experiment_project/moxin/crewai/input/Retrieval-Augmented Generation with Knowledge Graphs for Customer Service Question Answering.pdf'
+    expected_output: 'Summary of the article'
+    agent: pdf_summarize
+    max_inter: 1
+
+
+
+model:
+  model_api_key: 
+  model_name: gpt-4
+  model_max_tokens: 2048
+  module_api_url: null
+
+other:
+  proxy_url: http://192.168.0.75:10809
+
+env:
+  SERPER_API_KEY: 2e4d9ef16c251219c58cb2b04509d626e43b09c1
+  AGENTOPS_API_KEY: 6805b2d1-50f8-4b7c-b88b-cff2b1c6ef27
+
+
+crewai_config:
+  memory: true
+
+

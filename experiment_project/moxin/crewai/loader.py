@@ -2,7 +2,7 @@ import json
 from dora import Node, DoraStatus
 import pyarrow as pa
 from experiment_project.utils.files.read import read_yaml
-crewai_agent_config = read_yaml('stock_analysis.yml')
+crewai_agent_config = read_yaml('audio_summarize.yml')
 
 class Operator:
     def on_event(
@@ -12,4 +12,4 @@ class Operator:
     ) -> DoraStatus:
         if dora_event["type"] == "INPUT":
             send_output("agent_config", pa.array([json.dumps(crewai_agent_config)]),dora_event['metadata'])
-        return DoraStatus.CONTINUE
+        return DoraStatus.STOP
