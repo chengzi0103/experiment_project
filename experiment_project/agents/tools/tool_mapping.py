@@ -7,8 +7,11 @@ from crewai_tools import TXTSearchTool
 from langchain.tools import DuckDuckGoSearchRun
 from crewai_tools import PDFSearchTool
 
+from experiment_project.utils.files.read import read_excel
+
+
 def get_tool_func(func_name:str):
-    tool_mapping = {'now_time':now_time,'stock_data':stock_data,'DuckDuckGoSearchRun':DuckDuckGoSearchRun,'text_rag':text_rag,'whisper_translate_audio':whisper_translate_audio,'TXTSearchTool':TXTSearchTool(),'PDFSearchTool':PDFSearchTool()}
+    tool_mapping = {'now_time':now_time,'stock_data':stock_data,'DuckDuckGoSearchRun':DuckDuckGoSearchRun,'text_rag':text_rag,'whisper_translate_audio':whisper_translate_audio,'TXTSearchTool':TXTSearchTool(),'PDFSearchTool':PDFSearchTool(),'read_excel':read_excel}
     return tool_mapping.get(func_name,None)
 
 def agent_tools(tool_names:Union[List[str],None]=None):
