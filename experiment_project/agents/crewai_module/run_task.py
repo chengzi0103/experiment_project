@@ -14,7 +14,7 @@ def run_crewai(crewai_config:dict):
         for env_name,env_value in crewai_config['env'].items():
             os.environ[env_name] = env_value
 
-    agentops.init()
+    # agentops.init()
     model_config,agents_config,tasks_config,other_config = crewai_config.get('model'),crewai_config.get('agents'),crewai_config.get('tasks'),crewai_config.get('other')
     proxy_url=other_config.get('proxy_url',None)
     if proxy_url is not None:
@@ -56,12 +56,10 @@ def run_crewai(crewai_config:dict):
     crew = setup_crew(
         agents=list(agents.values()),
         tasks=tasks,
-        memory=crewai_config.get('crewai_config').get('memory',None),
+        memory=crewai_config.get('crewai_config').get('memory',False),
         process = crewai_config.get('crewai_config').get('process',None),
         manager_agent= agents.get(crewai_config.get('crewai_config').get('manager_agent',None))
     )
     result = crew.kickoff()
     return result
 
-config = read_yaml('/mnt/d/project/zzbc/experiment_project/experiment_project/audio/ecommerce_agent.yml')
-result = run_crewai(crewai_config=config)
