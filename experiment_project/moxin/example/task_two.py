@@ -14,7 +14,7 @@ class Operator:
             if dora_event['id'] == 'run_task_num':
                 input = dora_event["value"][0].as_py()
                 if '2' in input:
-                    print(f'任务运行时间  {now_time()}', '完成task-two的任务')
+                    print(f'任务运行时间  {now_time()}', '完成ta./two的任务')
                     send_output('task_two_loop_num', pa.array(['task_two']), dora_event['metadata'])
                     return DoraStatus.CONTINUE
         return DoraStatus.CONTINUE

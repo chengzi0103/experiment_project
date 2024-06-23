@@ -1,0 +1,2 @@
+openai.APIError: The model produced invalid content. Consider modifying your prompt if you are seeing this error persistently.
+ERROR conda.cli.main_run:execute(124): `conda run python /mnt/c/Users/chenzi/Desktop/project/experiment_project/experiment_project/audio/run_task.py` failed. (See above for error)

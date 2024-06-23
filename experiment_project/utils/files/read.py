@@ -14,7 +14,7 @@ def read_text(file_path: str = '/mnt/d/project/dy/extra/nlp/uie/三体1疯狂年
 
 
 
-def read_excel(file_path:str, sheet_names:list[str]=None):
+def read_excel(file_path:str, sheet_names:list[str]=None)->[dict]:
     """
     读取Excel文件中的所有sheet或者指定的sheet，并生成一个包含字典的列表。
 
