@@ -12,3 +12,4 @@ def split_txt_by_langchain(chuck_size: int = 1024, chuck_overlap: int = 0,
     )
     texts = text_splitter.split_text(read_text(file_path=file_path,encoding=encoding))
     return texts
+

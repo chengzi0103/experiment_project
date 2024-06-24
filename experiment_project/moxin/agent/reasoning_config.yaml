@@ -21,20 +21,21 @@ AGENT:
 
     5. Feedback Mechanism
     Your prompts ensure AI provides constructive and structured feedback.
+
   TASK: Does Input spport variable input？ Can Innput gets content input from the terminal window?
 
 
 
 MODEL:
-#  MODEL_API_KEY: 
-#  MODEL_NAME: deepseek-chat
-#  MODEL_MAX_TOKENS: 2048
-#  MODEL_API_URL: https://api.deepseek.com/v1
-
-  MODEL_API_KEY: 
-  MODEL_NAME: gpt-4o
+  MODEL_API_KEY:
+  MODEL_NAME: moonshot-v1-32k
   MODEL_MAX_TOKENS: 2048
-  MODEL_API_URL: 2048
+  MODEL_API_URL: https://api.moonshot.cn/v1
+
+#  MODEL_API_KEY:
+#  MODEL_NAME: gpt-4o
+#  MODEL_MAX_TOKENS: 2048
+#  MODEL_API_URL: 2048
 
 env:
   SERPER_API_KEY: 2e4d9ef16c251219c58cb2b04509d626e43b09c1

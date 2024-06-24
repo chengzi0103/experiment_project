@@ -32,11 +32,15 @@ simplematrixbotlib
 # --------- ai-tools --------- #
 langchain-openai
 langchain-community
-
+langchain_cohere
+langchain_postgres
 # --------- ai --------- #
 openai
 duckduckgo-search
 
+
+# --------- db --------- #
+psycopg[binary]
 
 # --------- deploy --------- #
 # ansible
