@@ -40,6 +40,16 @@ nodes:
       inputs:
 #        recording: whisper/text
         tick: dora/timer/millis/50
+  - id: listener
+    operator:
+      python: listener_op.py
+      inputs:
+        buffer: keyboard/buffer
+        submitted: keyboard/submitted
+        record: keyboard/record
+        ask: keyboard/ask
+        send: keyboard/send
+        change: keyboard/change
 
 #  - id: microphone
 #    operator:

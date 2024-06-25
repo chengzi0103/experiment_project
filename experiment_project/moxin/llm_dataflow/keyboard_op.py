@@ -12,15 +12,15 @@ NODE_TOPIC = ["record", "send", "ask", "change"]
 
 with keyboard.Events() as events:
     while True:
-        # dora_event = node.next(0.01)
-        # if (
-        #     dora_event is not None
-        #     and dora_event["type"] == "INPUT"
-        #     # and dora_event["id"] == "recording"
-        # ):
-        #     buffer_text += dora_event["value"][0].as_py()
-        #     node.send_output("buffer", pa.array([buffer_text]))
-        #     continue
+        dora_event = node.next(0.01)
+        if (
+            dora_event is not None
+            and dora_event["type"] == "INPUT"
+            and dora_event["id"] == "recording"
+        ):
+            buffer_text += dora_event["value"][0].as_py()
+            node.send_output("buffer", pa.array([buffer_text]))
+            continue
 
         event = events.get(1.0)
         if event is not None and isinstance(event, Events.Press):

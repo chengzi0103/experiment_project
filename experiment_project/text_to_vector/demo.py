@@ -100,7 +100,10 @@ vectorstore = PGVector(
     connection=connection,
     use_jsonb=True,
 )
-data = split_txt_by_langchain(file_path='/mnt/d/project/zzbc/experiment_project/experiment_project/text_to_vector/三体1疯狂年代.txt',encoding='gbk')
+data = split_txt_by_langchain(chuck_size=256,file_path='/mnt/d/project/zzbc/experiment_project/experiment_project/text_to_vector/xiaoaojianghu_jinyong.txt')
 docs_data = [Document(page_content=text,metadata={"id": num+1,'chunk_index':num,'chunk_size':len(text)}) for num,text in enumerate(data)]
+# vectorstore.drop_tables()
+
+
 vectorstore.add_documents(docs_data, ids=[doc.metadata["id"] for doc in docs_data])
-vectorstore.similarity_search("汪淼",k=8)
+vectorstore.similarity_search("笑傲江湖讲的是的什么?",k=8)

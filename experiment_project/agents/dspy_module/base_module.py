@@ -1,10 +1,10 @@
 import random
-from typing import Union
+from typing import Union, List
 
 import dspy
 
 from experiment_project.agents.dspy_module.base_signature import init_multiple_inputs_signature, init_base_signature, \
-    init_consensus_signature
+    init_consensus_signature, init_costar_signature
 
 
 # from experiment_project.dspy_module.agent_signature import init_base_signature, init_multiple_inputs_signature, \
@@ -12,12 +12,14 @@ from experiment_project.agents.dspy_module.base_signature import init_multiple_i
 
 
 class ReasonerModule(dspy.Module):
-    def __init__(self,reasoning_signature: dspy.Signature):
+    def __init__(self,reasoning_signature: dspy.Signature,):
         super().__init__()
+
         self.prog = dspy.Predict(reasoning_signature)
 
     def forward(self, question):
         return self.prog(question=question)
+
 
 
 class SelfRefineModule(dspy.Module):
@@ -104,22 +106,87 @@ class ConsensusModule(dspy.Module):
         answer = self.predict(question=question,contexts=contexts,**self.no_cache).answer
         return answer
 
+class TaskAnalysisModule(dspy.Module):
+    def __init__(self,role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None, input_fields: list[str] = None,objective:str=None,specifics:str=None,actions:str=None,results:str=None,example:str=None):
+        super().__init__()
+        if role == None:
+            role = "You're a mission analysis assistant."
+        if objective == None:
+            objective = 'The main goal of the task is to extract and summarize the key information from the submitted task description, clarifying the main points and key requirements.'
+        if specifics ==None:
+            specifics = ('Main elements involved in the task description (e.g., goals, objects, environment).'
+                         'Specific requirements and expected outcomes of the task.'
+                         'Key points and potential challenges to focus on during task execution.')
+
+        if results == None:
+            results = "The returned result is a json object {'task_description':', 'keywords':} task_description is the result of summary and analysis of the task. Keywords is the keyword about this task, which cannot exceed 3 keywords. If keywords cannot be parsed, return []"
+        if example == None:
+            example = """
+            问题: 分析《笑傲江湖》说明了什么？
+            结果: 
+            {"task_description": "分析《笑傲江湖》的核心思想和主题，包括分析主要人物及其行为动机，探讨主要事件及其影响，关注权力斗争、人性刻画和自由与束缚。","keywords": ["笑傲江湖", "金庸", "令狐冲"]}
+        
+            问题: 研究《红楼梦》中人物关系的复杂性。
+            {"task_description": "研究《红楼梦》中人物关系的复杂性，包括分析主要人物及其关系网络，探讨人物之间的冲突和合作，关注人物关系、社会背景和情感纠葛。","keywords": ["红楼梦", "曹雪芹", "贾宝玉"]}
+            
+            问题: 中国的四大名著是什么?
+            {"task_description": "识别并列出中国四大名著，提供每本书的简要描述，包括其主要主题和意义。","keywords": ["四大名著", "中国文学"]}
+            
+            """
+        task_analysis_signature = init_costar_signature(role=role,backstory=backstory,output_fields=output_fields,input_fields=input_fields,objective=objective,specifics=specifics,actions=actions,results=results,example=example)
+        self.predict = dspy.Predict(task_analysis_signature)
+    def forward(self,question:str):
+        predict = self.predict(question=question)
+        return predict
 
 
-# from experiment_project.utils.initial.util import init_sys_env
-# from experiment_project.utils.files.read import read_yaml
-# import dspy
-#
-# init_sys_env()
-# secret_env_file = '/mnt/d/project/zzbc/env_secret_config.yaml'
-#
-# api_configs = read_yaml(secret_env_file)
-#
-# model_config = api_configs.get('openai')
-# turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=2048,api_key=model_config.get('api_key'))
-# dspy.settings.configure(lm=turbo)
-#
-# base_signature = init_base_signature(role='我希望你担任影评人。您将撰写一篇引人入胜且富有创意的电影评论。你可以涵盖情节、主题和基调、表演和角色、导演、配乐、摄影、制作设计、特效、编辑、节奏、对话等主题。但最重要的方面是强调这部电影给你带来的感受。什么真正引起了你的共鸣。您也可以批评这部电影。')
-# refine_module = SelfRefineModule(self_refine_signature=base_signature)
-# result = refine_module.forward(question='openai中的temperature设置多少合适? 我需要在写作助手设置它')
-#
+class DataMergeModule(dspy.Module):
+    def __init__(self, role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None,
+                 input_fields: list[str] = None, objective: str = None, specifics: str = None, actions: str = None,
+                 results: str = None, example: str = None):
+        super().__init__()
+        if role is None:
+            role = "You are a data merge and analysis assistant."
+        if objective is None:
+            objective = "The main goal of the task is to merge and filter the data obtained from the RAG database and LLM query, and produce the best result."
+        if specifics is None:
+            specifics = ('Main elements involved in the data merge process (e.g., sources, data types, relevance).'
+                         'Specific requirements and expected outcomes of the data merge task.'
+                         'Key points and potential challenges to focus on during data merge and analysis.')
+        if results is None:
+            results = "Return different data structures according to the problem."
+        if example is None:
+            example = """
+            
+            """
+        data_merge_signature = init_costar_signature(role=role, backstory=backstory, output_fields=output_fields,
+                                                     input_fields=input_fields, objective=objective,
+                                                     specifics=specifics, actions=actions, results=results,
+                                                     example=example)
+        self.predict = dspy.Predict(data_merge_signature)
+
+    def forward(self, rag_data: str, llm_data: str):
+        question = f"Combine and filter the following data obtained from the RAG database and LLM query:\nRAG Data: {rag_data}\nLLM Data: {llm_data}"
+        predict = self.predict(question=question)
+        return predict
+
+
+from experiment_project.utils.initial.util import init_sys_env
+from experiment_project.utils.files.read import read_yaml
+import dspy
+
+init_sys_env()
+secret_env_file = '/mnt/d/project/zzbc/env_secret_config.yaml'
+
+api_configs = read_yaml(secret_env_file)
+
+model_config = api_configs.get('openai')
+turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=2048,api_key=model_config.get('api_key'))
+dspy.settings.configure(lm=turbo)
+
+
+refine_module = TaskAnalysisModule()
+
+result = refine_module.forward(question='中国的四大名著是什么?')
+print(result)
+
