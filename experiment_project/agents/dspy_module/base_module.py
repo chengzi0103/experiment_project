@@ -4,7 +4,7 @@ from typing import Union, List
 import dspy
 
 from experiment_project.agents.dspy_module.base_signature import init_multiple_inputs_signature, init_base_signature, \
-    init_consensus_signature, init_costar_signature
+    init_consensus_signature, init_costar_signature, init_costar_signature_input
 
 
 # from experiment_project.dspy_module.agent_signature import init_base_signature, init_multiple_inputs_signature, \
@@ -110,18 +110,18 @@ class TaskAnalysisModule(dspy.Module):
     def __init__(self,role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None, input_fields: list[str] = None,objective:str=None,specifics:str=None,actions:str=None,results:str=None,example:str=None):
         super().__init__()
         if role == None:
-            role = "You're a mission analysis assistant."
+            self.role = "You're a mission analysis assistant."
         if objective == None:
-            objective = 'The main goal of the task is to extract and summarize the key information from the submitted task description, clarifying the main points and key requirements.'
+            self.objective = 'The main goal of the task is to extract and summarize the key information from the submitted task description, clarifying the main points and key requirements.'
         if specifics ==None:
-            specifics = ('Main elements involved in the task description (e.g., goals, objects, environment).'
+            self.specifics = ('Main elements involved in the task description (e.g., goals, objects, environment).'
                          'Specific requirements and expected outcomes of the task.'
                          'Key points and potential challenges to focus on during task execution.')
 
         if results == None:
-            results = "The returned result is a json object {'task_description':', 'keywords':} task_description is the result of summary and analysis of the task. Keywords is the keyword about this task, which cannot exceed 3 keywords. If keywords cannot be parsed, return []"
+            self.results = "The returned result is a json object No other format or content is required {'task_description':', 'keywords':} task_description is the result of summary and analysis of the task. Keywords is the keyword about this task, which cannot exceed 3 keywords. If keywords cannot be parsed, return []"
         if example == None:
-            example = """
+            self.example = """
             问题: 分析《笑傲江湖》说明了什么？
             结果: 
             {"task_description": "分析《笑傲江湖》的核心思想和主题，包括分析主要人物及其行为动机，探讨主要事件及其影响，关注权力斗争、人性刻画和自由与束缚。","keywords": ["笑傲江湖", "金庸", "令狐冲"]}
@@ -133,60 +133,50 @@ class TaskAnalysisModule(dspy.Module):
             {"task_description": "识别并列出中国四大名著，提供每本书的简要描述，包括其主要主题和意义。","keywords": ["四大名著", "中国文学"]}
             
             """
-        task_analysis_signature = init_costar_signature(role=role,backstory=backstory,output_fields=output_fields,input_fields=input_fields,objective=objective,specifics=specifics,actions=actions,results=results,example=example)
+        task_analysis_signature = init_costar_signature_input(role=role,backstory=backstory,output_fields=output_fields,input_fields=input_fields,objective=objective,specifics=specifics,actions=actions,results=results,example=example)
         self.predict = dspy.Predict(task_analysis_signature)
     def forward(self,question:str):
-        predict = self.predict(question=question)
+        predict = self.predict(question=question,role=self.role,example=self.example,specifics=self.specifics,results=self.results,**self.no_cache)
         return predict
+    @property
+    def no_cache(self):
+        return dict(temperature=0.7 + 0.0001 * random.uniform(-1, 1))
 
 
-class DataMergeModule(dspy.Module):
+class QualityEnhancerModule(dspy.Module):
     def __init__(self, role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None,
                  input_fields: list[str] = None, objective: str = None, specifics: str = None, actions: str = None,
                  results: str = None, example: str = None):
         super().__init__()
         if role is None:
-            role = "You are a data merge and analysis assistant."
+            role = "Quality Enhancer"
+        if backstory is None:
+            # backstory = 'Provides the background information for the task. It gives context and helps understand the purpose and the setting of the task.'
+            backstory = 'This module is designed to enhance the quality of answers by integrating RAG and LLM outputs.'
         if objective is None:
-            objective = "The main goal of the task is to merge and filter the data obtained from the RAG database and LLM query, and produce the best result."
-        if specifics is None:
-            specifics = ('Main elements involved in the data merge process (e.g., sources, data types, relevance).'
-                         'Specific requirements and expected outcomes of the data merge task.'
-                         'Key points and potential challenges to focus on during data merge and analysis.')
+            # objective = " To optimize the final result for a given question, integrate the outputs generated by the Retrieval-Augmented Generation (RAG) system with the responses generated by the Large Language Model (LLM). This involves combining the retrieved and generated information based on the question to provide a more accurate and comprehensive answer."
+            objective = """To optimize the final result for a given question, integrate the outputs generated by the "
+               "Retrieval-Augmented Generation (RAG) system with the responses generated by the Large Language Model (LLM). "
+               "This involves combining the retrieved and generated information based on the question to provide a more accurate and comprehensive answer."""
+        if actions is None:
+            actions = "Merge and analyze RAG and LLM outputs to generate the final answer."
         if results is None:
-            results = "Return different data structures according to the problem."
-        if example is None:
-            example = """
-            
-            """
+            results = ''
+        if input_fields is None:
+            input_fields = ['rag_data','llm_data']
+
         data_merge_signature = init_costar_signature(role=role, backstory=backstory, output_fields=output_fields,
                                                      input_fields=input_fields, objective=objective,
                                                      specifics=specifics, actions=actions, results=results,
                                                      example=example)
         self.predict = dspy.Predict(data_merge_signature)
+    @property
+    def no_cache(self):
+        return dict(temperature=0.7 + 0.0001 * random.uniform(-1, 1))
 
-    def forward(self, rag_data: str, llm_data: str):
-        question = f"Combine and filter the following data obtained from the RAG database and LLM query:\nRAG Data: {rag_data}\nLLM Data: {llm_data}"
-        predict = self.predict(question=question)
+    def forward(self,question:str, rag_data: str, llm_data: str):
+        predict = self.predict(question=question,rag_data=rag_data,llm_data=llm_data,**self.no_cache)
         return predict
 
 
-from experiment_project.utils.initial.util import init_sys_env
-from experiment_project.utils.files.read import read_yaml
-import dspy
-
-init_sys_env()
-secret_env_file = '/mnt/d/project/zzbc/env_secret_config.yaml'
-
-api_configs = read_yaml(secret_env_file)
-
-model_config = api_configs.get('openai')
-turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=2048,api_key=model_config.get('api_key'))
-dspy.settings.configure(lm=turbo)
-
-
-refine_module = TaskAnalysisModule()
-
-result = refine_module.forward(question='中国的四大名著是什么?')
-print(result)
 
