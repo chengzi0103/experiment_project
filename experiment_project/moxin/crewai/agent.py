@@ -3,7 +3,7 @@ import json
 from dora import Node, DoraStatus
 import pyarrow as pa
 
-from experiment_project.agents.crewai_module.run_task import run_crewai
+from experiment_project.agents.crewai.run_task import run_crewai
 from experiment_project.utils.files.read import read_yaml
 crewai_agent_config = read_yaml('agent_config.yml')
 

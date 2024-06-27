@@ -1,7 +1,7 @@
 import os
 
-from experiment_project.agents.crewai_module.base_module import create_agent, create_task, setup_crew
-from experiment_project.agents.crewai_module.util import set_api_keys, make_crewai_tool
+from experiment_project.agents.crewai.base_module import create_agent, create_task, setup_crew
+from experiment_project.agents.crewai.util import set_api_keys, make_crewai_tool
 from experiment_project.agents.tools.tool_mapping import  agent_tools
 from experiment_project.utils.files.read import read_yaml
 from experiment_project.utils.initial.util import init_sys_env

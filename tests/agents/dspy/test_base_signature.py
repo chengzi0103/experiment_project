@@ -2,7 +2,7 @@ from typing import Union
 
 import dspy
 
-from experiment_project.agents.dspy_module.base_signature import init_custom_signature
+from experiment_project.agents.dspy.base_signature import init_custom_signature
 def init_custom_signature(role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None,input_fields:list[str]=None):
     inputs = {'role': role, 'backstory': backstory}
 

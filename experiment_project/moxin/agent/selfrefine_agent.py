@@ -8,8 +8,8 @@ from dora import Node, DoraStatus
 import dspy
 import pyarrow as pa
 
-from experiment_project.agents.dspy_module.base_module import SelfRefineModule
-from experiment_project.agents.dspy_module.base_signature import init_base_signature
+from experiment_project.agents.dspy.self_refine import SelfRefineModule
+from experiment_project.agents.dspy.base_signature import init_base_signature
 from experiment_project.agents.utils.util import init_agentops
 
 from experiment_project.utils.initial.util import init_sys_env
