@@ -19,7 +19,7 @@ class ReasoningModule(dspy.Module):
         super().__init__()
         self.prog = dspy.Predict(reasoning_signature)
 
-    def forward(self, question):
+    def forward(self, question:str):
         return self.prog(question=question)
 class Operator:
     def on_event(
@@ -32,25 +32,18 @@ class Operator:
                 inputs = dora_event["value"][0].as_py()
                 inputs = json.loads(inputs)
                 # if 'reasoning' in inputs.get('agent_list') or 'reasoner' in inputs.get('agent_list'):
-
                 if inputs.get('proxy_url', None) is not None:
-
                     init_sys_env(proxy_url=inputs.get('proxy_url', None))
                 if inputs.get('env', None) is not None: init_env(env=inputs['env'])
 
-
-
                 turbo = dspy.OpenAI(model=inputs.get('model_name'), max_tokens=inputs.get('model_max_tokens'), api_key=inputs.get('model_api_key'),api_base=inputs.get('model_api_url',None))
                 dspy.settings.configure(lm=turbo)
-                init_agentops(inputs['agentops_api_key'])
-                agentops.start_session()
-                class ReasoningSignature(dspy.Signature):
 
+                class ReasoningSignature(dspy.Signature):
                     question = dspy.InputField()
                     answer = dspy.OutputField(desc='')
-                    role = dspy.OutputField(desc=inputs.get('role', None))
-                    backstory = dspy.OutputField(desc=inputs.get('backstory', None))
-
+                    role = dspy.InputField(desc=inputs.get('role', ''))
+                    backstory = dspy.InputField(desc=inputs.get('backstory', ''))
 
                 reasoning = ReasoningModule(reasoning_signature=ReasoningSignature)
                 task,result = inputs.get('task'),''

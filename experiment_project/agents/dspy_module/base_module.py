@@ -20,6 +20,14 @@ class ReasonerModule(dspy.Module):
     def forward(self, question):
         return self.prog(question=question)
 
+class ReasonerModule(dspy.Module):
+    def __init__(self,reasoning_signature: dspy.Signature,):
+        super().__init__()
+
+        self.prog = dspy.Predict(reasoning_signature)
+
+    def forward(self, question):
+        return self.prog(question=question)
 
 
 class SelfRefineModule(dspy.Module):
@@ -122,15 +130,15 @@ class TaskAnalysisModule(dspy.Module):
             self.results = "The returned result is a json object No other format or content is required {'task_description':', 'keywords':} task_description is the result of summary and analysis of the task. Keywords is the keyword about this task, which cannot exceed 3 keywords. If keywords cannot be parsed, return []"
         if example == None:
             self.example = """
-            问题: 分析《笑傲江湖》说明了什么？
-            结果: 
-            {"task_description": "分析《笑傲江湖》的核心思想和主题，包括分析主要人物及其行为动机，探讨主要事件及其影响，关注权力斗争、人性刻画和自由与束缚。","keywords": ["笑傲江湖", "金庸", "令狐冲"]}
+            问题: "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are."
+            结果: {"task_description": "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are.","keywords": ["summary", "theme", "Text-Animator Controllable Visual Text Video Generation", "achievements", "authors"]}
+
         
             问题: 研究《红楼梦》中人物关系的复杂性。
-            {"task_description": "研究《红楼梦》中人物关系的复杂性，包括分析主要人物及其关系网络，探讨人物之间的冲突和合作，关注人物关系、社会背景和情感纠葛。","keywords": ["红楼梦", "曹雪芹", "贾宝玉"]}
+            {"task_description": "研究《红楼梦》中人物关系的复杂性。","keywords": ["红楼梦", "人物关系", "复杂性"]}
             
             问题: 中国的四大名著是什么?
-            {"task_description": "识别并列出中国四大名著，提供每本书的简要描述，包括其主要主题和意义。","keywords": ["四大名著", "中国文学"]}
+            {"task_description": "中国的四大名著是什么?","keywords": ["四大名著", "中国"]}
             
             """
         task_analysis_signature = init_costar_signature_input(role=role,backstory=backstory,output_fields=output_fields,input_fields=input_fields,objective=objective,specifics=specifics,actions=actions,results=results,example=example)
@@ -143,29 +151,75 @@ class TaskAnalysisModule(dspy.Module):
         return dict(temperature=0.7 + 0.0001 * random.uniform(-1, 1))
 
 
+class FindTaskKeyWordsModule(dspy.Module):
+    def __init__(self, role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None,
+                 input_fields: list[str] = None, objective: str = None, specifics: str = None, actions: str = None,
+                 results: str = None, example: str = None):
+        super().__init__()
+        if role == None:
+            self.role = "Analyze the task description to extract and list key concepts or keywords."
+        if objective == None:
+            self.objective = 'Clarify the main goal of the task: Extract and list the keywords from the task description, ensuring the number of keywords does not exceed 5.'
+        if actions == None:
+            self.actions = ('Read and understand the task description provided by the user.'
+                              'Extract 3 to 5 keywords from the task description.'
+                              'Ensure the keywords accurately reflect the core content of the task.'
+                            'If the keyword cannot be extracted, it returns []')
+
+        if results == None:
+            self.results = "Describe the expected results or outcomes: Successfully extract and list the keywords from the task description, with a total not exceeding 5, accurately reflecting the core content of the task."
+        if example == None:
+            self.example = """
+            问题： 你是谁？
+            结果： {"task_description": "你是谁？","keywords": []}
+            
+            问题: "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are."
+            结果: {"task_description": "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are.","keywords": ["summary", "theme", "Text-Animator Controllable Visual Text Video Generation", "achievements", "authors"]}
+
+
+            问题: 研究《红楼梦》中人物关系的复杂性。
+            {"task_description": "研究《红楼梦》中人物关系的复杂性。","keywords": ["红楼梦", "人物关系", "复杂性"]}
+
+            问题: 中国的四大名著是什么?
+            {"task_description": "中国的四大名著是什么?","keywords": ["四大名著", "中国"]}
+
+            """
+        task_analysis_signature = init_costar_signature_input(role=role, backstory=backstory,
+                                                              output_fields=output_fields, input_fields=input_fields,
+                                                              objective=objective, specifics=specifics, actions=actions,
+                                                              results=results, example=example)
+        self.predict = dspy.Predict(task_analysis_signature)
+
+    def forward(self, question: str):
+        predict = self.predict(question=question, role=self.role, example=self.example,actions=self.actions,objective=self.objective,
+                               results=self.results, **self.no_cache)
+        return predict
+
+    @property
+    def no_cache(self):
+        return dict(temperature=0.7 + 0.0001 * random.uniform(-1, 1))
+
 class QualityEnhancerModule(dspy.Module):
     def __init__(self, role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None,
                  input_fields: list[str] = None, objective: str = None, specifics: str = None, actions: str = None,
                  results: str = None, example: str = None):
         super().__init__()
         if role is None:
-            role = "Quality Enhancer"
+            self.role = "Quality Enhancer"
         if backstory is None:
             # backstory = 'Provides the background information for the task. It gives context and helps understand the purpose and the setting of the task.'
-            backstory = 'This module is designed to enhance the quality of answers by integrating RAG and LLM outputs.'
+            self.backstory = 'This module is designed to enhance the quality of answers by integrating RAG and LLM outputs.Primarily use data from rag_data, with llm_result as a supplement'
         if objective is None:
             # objective = " To optimize the final result for a given question, integrate the outputs generated by the Retrieval-Augmented Generation (RAG) system with the responses generated by the Large Language Model (LLM). This involves combining the retrieved and generated information based on the question to provide a more accurate and comprehensive answer."
-            objective = """To optimize the final result for a given question, integrate the outputs generated by the "
+            self.objective = """To optimize the final result for a given question, integrate the outputs generated by the "
                "Retrieval-Augmented Generation (RAG) system with the responses generated by the Large Language Model (LLM). "
-               "This involves combining the retrieved and generated information based on the question to provide a more accurate and comprehensive answer."""
+               "This involves combining the retrieved and generated information based on the question to provide a more accurate and comprehensive answer. Primarily use data from rag_data, with llm_result as a supplement """
         if actions is None:
-            actions = "Merge and analyze RAG and LLM outputs to generate the final answer."
-        if results is None:
-            results = ''
+            self.actions = "Merge and analyze RAG and LLM outputs to generate the final answer.Primarily use data from rag_data, with llm_result as a supplement."
         if input_fields is None:
-            input_fields = ['rag_data','llm_data']
+            input_fields = {'rag_data':'Data after rag query','llm_data':'Data after LLM query'}
 
-        data_merge_signature = init_costar_signature(role=role, backstory=backstory, output_fields=output_fields,
+        data_merge_signature = init_costar_signature_input(role=role, backstory=backstory, output_fields=output_fields,
                                                      input_fields=input_fields, objective=objective,
                                                      specifics=specifics, actions=actions, results=results,
                                                      example=example)
@@ -175,7 +229,7 @@ class QualityEnhancerModule(dspy.Module):
         return dict(temperature=0.7 + 0.0001 * random.uniform(-1, 1))
 
     def forward(self,question:str, rag_data: str, llm_data: str):
-        predict = self.predict(question=question,rag_data=rag_data,llm_data=llm_data,**self.no_cache)
+        predict = self.predict(question=question,rag_data=rag_data,llm_data=llm_data,role=self.role,backstory=self.backstory,objective=self.objective,actions=self.actions,example=None,**self.no_cache)
         return predict
 
 

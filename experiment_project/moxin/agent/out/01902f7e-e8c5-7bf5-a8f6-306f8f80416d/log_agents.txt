@@ -1,9 +1,0 @@
-🖇 AgentOps: [34mSession Replay: https://app.agentops.ai/drilldown?session_id=0e8dc760-2a84-4430-8b94-f82c502362eb[0m
-🖇 AgentOps: Cannot start session - session already started
-🖇 AgentOps: Invalid end_state. Please use one of the EndState enums
-WARNING:agentops:Invalid end_state. Please use one of the EndState enums
-🖇 AgentOps: This run's cost $0.00
-INFO:agentops:This run's cost $0.00
-🖇 AgentOps: [34mSession Replay: https://app.agentops.ai/drilldown?session_id=0e8dc760-2a84-4430-8b94-f82c502362eb[0m
-INFO:agentops:[34mSession Replay: https://app.agentops.ai/drilldown?session_id=0e8dc760-2a84-4430-8b94-f82c502362eb[0m
-result is   Answer: The correct spelling is "support" instead of "spport" and "Input" instead of "Innput". The corrected question should be: "Does Input support variable input? Can Input get content input from the terminal window?" Yes, Input can support variable input and can get content input from the terminal window.
