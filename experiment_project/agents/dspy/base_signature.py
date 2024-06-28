@@ -88,6 +88,59 @@ def init_costar_signature(role: Union[str, None] = None, backstory: Union[str, N
 
     return COStarSignature
 
+def selfrefine_costar_signature(role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None, input_fields: dict = None, objective:str=None, specifics:str=None, actions:str=None, results:str=None, example:str=None, answer:str=None):
+    """
+    backstory（上下文）: 提供任务的背景信息。
+    Objective（目标）: 明确任务的主要目标。
+    Specifics（细节）: 列出任务的具体要求。
+    Tasks（任务）: 描述需要完成的任务。
+    Actions（行动）: 列出需要执行的具体步骤。
+    Results（结果）: 描述预期的结果或成果
+    example（案例）: 任务的案例
+    """
+    inputs = {}
+
+    for input_field in [role,backstory,objective,specifics,actions,results,example,answer]:
+        if input_field is None:
+            input_field = ''
+        inputs[get_variable_name(input_field, locals())[0]] = input_field
+
+    # 定义CO-STAR字段
+    fields = {
+        'question': dspy.InputField(desc="The question we're trying to answer."),
+        'objective': dspy.InputField(desc=inputs.get('objective', '')),
+        'specifics': dspy.InputField(desc=inputs.get('specifics', '')),
+        'actions': dspy.InputField(desc=inputs.get('actions','')),
+        'results': dspy.InputField(desc=inputs.get('results','')),
+        'example': dspy.InputField(desc=inputs.get('example','')),
+        'answer': dspy.OutputField(desc=inputs.get('answer','Answer: ')),
+        'role': dspy.InputField(desc=inputs.get('role','Specifies the role or purpose of the module.')),
+        'backstory': dspy.InputField(desc=inputs.get('backstory',''))
+    }
+
+    # 动态添加额外字段
+    if input_fields:
+        for field_name, field_desc in input_fields.items():
+            fields[field_name] = dspy.InputField(desc=field_desc)
+
+    if output_fields:
+        for field_name, field_desc in output_fields.items():
+            fields[field_name] = dspy.OutputField(desc=field_desc)
+    all_fields = {}
+    for field_name, field_desc in fields.items():
+
+        if field_desc.json_schema_extra.get('__dspy_field_type') == 'output':
+            all_fields[field_name] = field_desc
+
+        if field_desc.json_schema_extra.get('__dspy_field_type') == 'input':
+            if field_desc.json_schema_extra.get('desc') != '':
+                all_fields[field_name] = field_desc
+            if field_name in ['answer', 'role',]:
+                all_fields[field_name] = field_desc
+    # 动态创建新的Signature类
+    COStarSignature = type('COStarSignature', (dspy.Signature,), all_fields)
+
+    return COStarSignature
 
 
 
