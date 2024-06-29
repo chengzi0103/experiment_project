@@ -1,5 +1,7 @@
 from typing import List, Union
 from experiment_project.agents.tools.util import stock_data, whisper_translate_audio, text_rag
+from experiment_project.agents.tools.vector import delete_vector_collection_with_tool, upload_files_to_vector_with_tool, \
+    search_vector_with_tool
 from experiment_project.utils.date.util import now_time
 # from langchain_community.tools.yahoo_finance_news import YahooFinanceNewsTool
 from crewai_tools import TXTSearchTool
@@ -21,7 +23,7 @@ from experiment_project.utils.rag.vector.pgvector import create_pgvector, delete
 
 def get_tool_func(func_name:str):
     # tool_mapping = {'now_time':now_time,'stock_data':stock_data,'DuckDuckGoSearchRun':DuckDuckGoSearchRun,'text_rag':text_rag,'whisper_translate_audio':whisper_translate_audio,'TXTSearchTool':TXTSearchTool(),'PDFSearchTool':PDFSearchTool(),'read_excel':read_excel,'create_pgvector':create_pgvector,'delete_vector_collection':delete_vector_collection,'upload_files_to_vector':upload_files_to_vector,"search_vector":search_vector,"load_embedding_model":load_embedding_model}
-    tool_mapping = {'now_time':now_time,'stock_data':stock_data,'text_rag':text_rag,'whisper_translate_audio':whisper_translate_audio,'read_excel':read_excel,'create_pgvector':create_pgvector,'delete_vector_collection':delete_vector_collection,'upload_files_to_vector':upload_files_to_vector,"search_vector":search_vector,"load_embedding_model":load_embedding_model}
+    tool_mapping = {'now_time':now_time,'stock_data':stock_data,'text_rag':text_rag,'whisper_translate_audio':whisper_translate_audio,'read_excel':read_excel,'delete_vector_collection_with_tool':delete_vector_collection_with_tool,'upload_files_to_vector_with_tool':upload_files_to_vector_with_tool,'search_vector_with_tool':search_vector_with_tool}
     # tool_mapping = {'now_time':now_time,'stock_data':stock_data,'text_rag':text_rag,'whisper_translate_audio':whisper_translate_audio,'read_excel':read_excel,}
     return tool_mapping.get(func_name,None)
 

@@ -8,8 +8,6 @@ from experiment_project.utils.initial.util import init_sys_env
 import agentops
 
 def run_crewai(crewai_config:dict):
-
-
     if crewai_config.get('env',None) is not None:
         for env_name,env_value in crewai_config['env'].items():
             os.environ[env_name] = env_value
@@ -29,6 +27,7 @@ def run_crewai(crewai_config:dict):
             try:
                 all_tools.append(make_crewai_tool(func))
             except Exception as e :
+                print(e)
                 all_tools.append(func)
         agent = create_agent(
                     role=agent_config['role'],

@@ -70,7 +70,6 @@ class TaskAnalysisModule(dspy.Module):
             问题: "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are."
             结果: {"task_description": "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are.","keywords": ["summary", "theme", "Text-Animator Controllable Visual Text Video Generation", "achievements", "authors"]}
 
-        
             问题: 研究《红楼梦》中人物关系的复杂性。
             {"task_description": "研究《红楼梦》中人物关系的复杂性。","keywords": ["红楼梦", "人物关系", "复杂性"]}
             

@@ -2,7 +2,7 @@ import json
 from dora import Node, DoraStatus
 import pyarrow as pa
 from experiment_project.utils.files.read import read_yaml
-crewai_agent_config = read_yaml('audio_summarize.yml')
+crewai_agent_config = read_yaml('rag_config.yml')
 
 class Operator:
     def on_event(

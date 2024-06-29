@@ -14,9 +14,8 @@ def load_embedding_model(module_path:str=None,model_name:str=None,multi_process:
     """
     embedding = None
     if module_path is not None:
-        embedding = HuggingFaceEmbeddings(model_name=module_path, model_kwargs=model_kwargs, show_progress=True,
-                                               multi_process=multi_process)
-    elif model_name is not None and module_path is None:
-        embedding = OpenAIEmbeddings(model_name=model_name)
+        embedding = HuggingFaceEmbeddings(model_name=module_path, model_kwargs=model_kwargs, show_progress=True,multi_process=multi_process)
+    # elif model_name is not None and module_path is None:
+    #     embedding = OpenAIEmbeddings(model_name=model_name)
     return embedding
 
