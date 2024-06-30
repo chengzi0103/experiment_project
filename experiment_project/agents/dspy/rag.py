@@ -1,5 +1,6 @@
 import json
 import random
+import re
 import time
 from pathlib import Path
 from typing import Union, List
@@ -14,6 +15,7 @@ from experiment_project.utils.ai.util import json_output_openai_result
 from experiment_project.utils.files.split import split_txt_by_langchain
 from langchain_community.document_loaders import PyPDFLoader
 
+from experiment_project.utils.initial.util import init_sys_env
 from experiment_project.utils.rag.embedding.huggingface import load_embedding_model
 from experiment_project.utils.rag.vector.pgvector import create_pgvector, upload_files_to_vector, \
     delete_vector_collection, search_vector
@@ -40,10 +42,13 @@ class BaseRag(dspy.Module):
 
     def get_result(self,result_module):
         answer = ''
-        if result_module.answer == '':
-            answer = result_module.objective
-        else:
-            answer = result_module.answer
+        try:
+            if result_module.answer == '':
+                answer = result_module.objective
+            else:
+                answer = result_module.answer
+        except:
+            answer = answer = result_module.results
         return answer
 
     def replace_prefix(self,data:str):
@@ -93,42 +98,59 @@ class FindTaskKeyWordsModule(dspy.Module):
                  results: str = None, example: str = None):
         super().__init__()
         if role == None:
-            self.role = "Analyze the task description to extract and list key concepts or keywords."
+            self.role = "Data extraction assistant"
+        if backstory == None:
+            self.backstory = "You are a data extraction assistant. Your task is to identify and extract relevant information from the provided task description to enhance data retrieval accuracy."
         if objective == None:
-            self.objective = 'Clarify the main goal of the task: Extract and list the keywords from the task description, ensuring the number of keywords does not exceed 5.'
-        if actions == None:
-            self.actions = ('Read and understand the task description provided by the user.'
-                              'Extract 3 to 5 keywords from the task description.'
-                              'Ensure the keywords accurately reflect the core content of the task.'
-                            'If the keyword cannot be extracted, it returns []')
+            self.objective = 'Extract and summarize essential details from the task description to facilitate precise data retrieval.'
+        # if actions == None:
+        #     self.actions = ('Read and understand the task description provided by the user.'
+        #                       'Extract 3 to 5 keywords from the task description.'
+        #                       'Ensure the keywords accurately reflect the core content of the task.'
+        #                     'If the keyword cannot be extracted, it returns []')
+        if specifics == None:
+            self.specifics = ('Identify key elements (e.g., time frames, authors, topics).'
+                              'Note any specific requirements or constraints.'
+                              'Ensure keywords reflect the main aspects of the question.')
 
         if results == None:
-            self.results = """The result must be a JSON object, {"task_description":"question","keywords":[""]}, where task_description represents the current task and keywords are the keywords identified from the task."""
+            self.results = """Return a JSON object structured as {"task_description":"Original question", 'keywords': [up to 3 key terms that clarify aspects of the question]}. The original question should also be included in the keywords but not counted within the limit of three key terms. If specific keywords are not identifiable, return an empty list []."""
         if example == None:
             self.example = """
             问题： 你是谁？
-            结果： {"task_description": "你是谁？","keywords": []}
+            结果： {"task_description": "你是谁？","keywords": ['你是谁？']}
             
             问题: "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are."
             结果: {"task_description": "Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are.","keywords": ["summary", "theme", "Text-Animator Controllable Visual Text Video Generation", "achievements", "authors"]}
 
 
             问题: 研究《红楼梦》中人物关系的复杂性。
-            {"task_description": "研究《红楼梦》中人物关系的复杂性。","keywords": ["红楼梦", "人物关系", "复杂性"]}
+            {"task_description": "研究《红楼梦》中人物关系的复杂性。","keywords": ["红楼梦中人物关系的复杂性", "研究《红楼梦》中人物关系的复杂性。"]}
 
             问题: 中国的四大名著是什么?
-            {"task_description": "中国的四大名著是什么?","keywords": ["四大名著", "中国"]}
+            {"task_description": "中国的四大名著是什么?","keywords": ["中国的四大名著是什么?", "中国四大名著"]}
 
             """
         task_analysis_signature = init_costar_signature(role=role,
                                                         output_fields=output_fields, input_fields=input_fields,
                                                         objective=objective,  actions=actions,
-                                                        results=results, example=example)
+                                                        results=results, example=example,specifics=specifics)
         self.predict = dspy.Predict(task_analysis_signature)
+    def serialization_result(self,result:str):
+        try:
+            return json_output_openai_result(data=result)
+        except:
+            match = re.search(r'Answer:\s*(\{.*\})', result)
+            if match:
+                json_str = match.group(1)
+                data = json.loads(json_str)
+                return data
+        else:
+            return result
 
     def forward(self, question: str):
-        predict = self.predict(question=question, role=self.role, example=self.example,actions=self.actions,objective=self.objective,
-                               results=self.results, **self.no_cache)
+        predict = self.predict(question=question, role=self.role, example=self.example,objective=self.objective,
+                               results=self.results,specifics=self.specifics, **self.no_cache)
         return predict
 
     @property
@@ -169,6 +191,51 @@ class QualityEnhancerModule(dspy.Module):
         predict = self.predict(question=question,rag_data=rag_data,llm_data=llm_data,role=self.role,backstory=self.backstory,objective=self.objective,actions=self.actions,example=None,**self.no_cache)
         return predict
 
+class EvaluationResultModule(dspy.Module):
+    def __init__(self, role: Union[str, None] = None, backstory: Union[str, None] = None, output_fields: dict = None,
+                 input_fields: list[str] = None, objective: str = None, specifics: str = None, actions: str = None,
+                 results: str = None, example: str = None):
+        super().__init__()
+        if role is None: role = 'Response validation assistant.'
+        if objective is None: objective = "Determine if the answer satisfies the question's requirements."
+        if specifics is None:  specifics = """Analyze the question to identify key elements and expectations.
+        Compare the answer against these elements.
+        Assess whether the answer fully addresses the question."""
+        if results is None: results = 'Respond with "Yes" if the answer meets the requirements, or "No" if it does not.'
+        if example is None: example = """
+        1. **Question:** "List all publications in AI from 2015 to 2023 focusing on neural networks."
+           - **Answer:** "Publications include research on neural networks in AI from 2015 to 2023."
+           - **Result:** "Yes"
+        2. **Question:** "Find research articles about quantum computing breakthroughs in 2021."
+           - **Answer:** "Articles from 2020 on general quantum computing topics."
+           - **Result:** "No"
+        """
+        self.role = role
+        self.objective = objective
+        self.specifics = specifics
+        self.results = results
+        self.example = example
+        self.evaluation_result =  dspy.Predict(init_costar_signature(input_fields={'context':"The content that needs suggestions"},role=role,objective=objective,specifics=specifics,
+                                                                  results=results,example=example))
+
+    def forward(self,question:str,context:str)->bool:
+        stop_condition = self.evaluation_result(role=self.role,
+                                                objective=self.objective,
+                                                specifics=self.specifics,
+                                                results=self.results,
+                                                example=self.example, question=question, context=context,
+                                                **dict(temperature=0.6 + 0.0001 * random.uniform(-1, 1)))
+        status = False
+        if stop_condition.answer =='':
+            if 'Yes' in stop_condition.actions or 'Yes' in stop_condition.backstory:
+                status= True
+        else:
+            if 'Yes' in stop_condition.answer :
+                status = True
+        return status
+
+
+
 class ReasonerRagModule(BaseRag):
     def __init__(self, module_path:str=None,model_name:str=None, pg_connection:str=None, collection_name:str='my_docs', is_upload_file:bool=False, files_path:List[str]=None,encoding:str= 'utf-8',chunk_size:int=256,multi_process:bool=False,rag_search_num:int=5):
         super().__init__(module_path=module_path, pg_connection=pg_connection, collection_name=collection_name, is_upload_file=is_upload_file, files_path=files_path,encoding=encoding,chunk_size=chunk_size,multi_process=multi_process,model_name=model_name)
@@ -179,18 +246,18 @@ class ReasonerRagModule(BaseRag):
 
     def rag_search(self, question: str, llm_result: str = ''):
         try:
-            task_result = json_output_openai_result(self.task_evaluation.forward(question=question).answer)
-
-            question = task_result.get('task_description')
+            task_result = self.task_evaluation.serialization_result(self.task_evaluation.forward(question=question).answer)
             keywords = task_result.get('keywords')
+            keywords.append(question)
         except:
-            keywords = question
+            keywords = [question]
+
         all_rag_result = self.search(keywords=keywords, k=self.rag_search_num)
         quality_enhancer_result = self.quality_enhancer.forward(question=question, rag_data=json.dumps(all_rag_result),
                                                                 llm_data=llm_result, )
         result = ''
         if quality_enhancer_result.answer == '':
-            result = quality_enhancer_result.results
+            result = quality_enhancer_result.specifics
         else:
             result = quality_enhancer_result.answer
         return result
@@ -245,10 +312,10 @@ class SelfRefineRagModule(ReasonerRagModule):
         """
         查看任务是否符合我们的期望和要求
         """
-        predict_stop_condition = dspy.Predict(selfrefine_costar_signature(input_fields={'context':"The content that needs suggestions"}))
-        stop_condition = predict_stop_condition(role=self.stop_condition_prompt,backstory='只回答 “是”或“否”。',question=self.replace_prefix(question),context=self.replace_prefix(context),**self.no_cache)
-        answer = self.get_result(stop_condition)
-        return answer
+
+        evaluation_result_module = EvaluationResultModule()
+        status = evaluation_result_module.forward(question=self.replace_prefix(question),context=self.replace_prefix(context))
+        return status
     def forward(self,question:str) -> str:
         answer = self.rag_search(question=question)
         for num in range(0, self.max_iterations):
@@ -257,7 +324,7 @@ class SelfRefineRagModule(ReasonerRagModule):
             refinement_answer = self.refinement(question=question, evaluate_data=answer,feedback_question=feedback_question)
             print(f'在第{num}次迭代后 , refinement_answer :   {refinement_answer}')
             stop_condition_status = self.stop_condition(question=question, context=refinement_answer)
-            if '是' in stop_condition_status:
+            if stop_condition_status == True:
                 return refinement_answer
             else:
                 answer = refinement_answer
@@ -266,16 +333,15 @@ class SelfRefineRagModule(ReasonerRagModule):
 # from experiment_project.utils.files.read import read_yaml
 # import dspy
 #
-# # init_sys_env()
-# # secret_env_file = '/mnt/c/Users/chenzi/Desktop/project/env_secret_config.yaml'
+# init_sys_env(proxy_url='http://192.168.31.50:10890')
+# secret_env_file = '/mnt/c/Users/chenzi/Desktop/project/env_secret_config.yaml'
 # secret_env_file = '/mnt/d/project/zzbc/env_secret_config.yaml'
 #
-# api_configs = read_yaml(secret_env_file)
-#
-# # model_config = api_configs.get('openai')
+# api_configs = read_yaml(secret_env_file)#
+# model_config = api_configs.get('openai')
 # model_config = api_configs.get('openai')
 # turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=4096,api_key=model_config.get('api_key'),api_base=model_config.get('base_url'))
-# # turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=4096,api_key=model_config.get('api_key'))
+# turbo = dspy.OpenAI(model=model_config.get('model'), max_tokens=4096,api_key=model_config.get('api_key'))
 # dspy.settings.configure(lm=turbo)
 # module_path = '/mnt/d/models/embeddings/bce-embedding-base_v1'
 # collection_name = 'pdf'
@@ -289,3 +355,39 @@ class SelfRefineRagModule(ReasonerRagModule):
 # quality_enhancer = QualityEnhancerModule()
 # quality_enhancer_result = quality_enhancer.forward(question=question, rag_data=rag_data, llm_data=llm_data, )
 # print(quality_enhancer_result)
+# inputs = {'model_api_key': '', 'model_name': 'gpt-4o', 'model_max_tokens': 2048, 'module_path': '/mnt/c/Users/chenzi/Desktop/project/model/bce-embedding-base_v1', 'pg_connection': 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain', 'collection_name': 'pdf', 'is_upload_file': True, 'files_path': ['/mnt/c/Users/chenzi/Desktop/project/data/Text-Animator Controllable Visual Text Video Generation.pdf', '/mnt/c/Users/chenzi/Desktop/project/data/moa-llm.pdf'], 'encoding': 'utf-8', 'chunk_size': 256, 'rag_search_num': 3, 'proxy_url': 'http://192.168.31.50:10890', 'task': 'Summarize the contents of the paper "Mixture-of-Agents Enhances Large Language Model Capabilities," and specify the authors, date, key points, and achievements of the paper.'}
+# refine_module = ReasonerRagModule(module_path=inputs.get('module_path',None),model_name=inputs.get('model_name',None),collection_name=inputs.get('model_name','my_docs'),
+#                                                   is_upload_file=inputs.get('is_upload_file',False),files_path=inputs.get('files_path',None),encoding=inputs.get('encoding','utf-8'),
+#                                                   chunk_size=inputs.get('chunk_size',256),multi_process=inputs.get('multi_process',False),rag_search_num=inputs.get('rag_search_num',5))
+# task, result = inputs.get('task'), ''
+# result = refine_module.forward(question=task)
+# question = '总结Mixture-of-Agents Enhances Large Language Model Capabilities论文里面的内容,并且说明作者,时间. 重点及论文的成果.'
+# refinement_answer = 'produce the answer. We need to merge and analyze the RAG and LLM outputs to generate the final answer. Primarily, we will use data from `rag_data`, with `llm_data` as a supplement. We will ensure completeness, accuracy, relevance, clarity, and user satisfaction as per the suggestions.\n\n1. **Completeness:** We need to include all relevant details from the paper, such as specific examples or case studies mentioned in the results section.\n2. **Accuracy:** We will double-check the publication date and author affiliations for any possible errors.\n3. **Relevance:** We will focus on the most impactful results and methodologies that are likely to interest the target audience.\n4. **Clarity:** We will simplify complex technical terms and processes to make the summary more accessible to a broader audience.\n5. **User Satisfaction:** We will include potential applications or implications of the MoA methodology to highlight its practical significance.\n\nAnswer: **Summary of the Paper:** The paper "Mixture-of-Agents Enhances Large Language Model Capabilities" introduces a novel methodology called Mixture-of-Agents (MoA) to leverage the collective strengths of multiple Large Language Models (LLMs) to enhance their performance. The methodology is based on the concept of collaborativeness among LLMs, where models can generate higher quality responses by referencing outputs from other models. The paper categorizes LLMs into two roles: proposers, which generate useful reference responses, and aggregators, which synthesize these responses into a single high-quality output. The MoA framework involves a layered architecture where each layer consists of multiple LLM agents. Each agent in a layer takes the outputs from agents in the previous layer as auxiliary information to generate its response. This iterative process of aggregation and re-aggregation aims to refine the responses, leveraging the strengths of multiple models to produce superior outcomes.\n\n**Authors and Date:**\n- Junlin Wang (Duke University, Together AI)\n- Jue Wang (Together AI)\n- Ben Athiwaratkun (Together AI)\n- Ce Zhang (University of Chicago, Together AI)\n- James Zou (Stanford University, Together AI)\n\nThe paper was submitted on June 7, 2024.\n\n**Key Points and Results:**\n1. **Collaborativeness of LLMs:** The paper demonstrates that LLMs can generate better responses when they can reference outputs from other models, even if those models are less capable.\n2. **Roles of LLMs:** LLMs are categorized into proposers and aggregators, with some models like GPT-4o, Qwen1.5, and LLaMA-3 being versatile in both roles, while others like WizardLM excel as proposers but not as aggregators.\n3. **Mixture-of-Agents Methodology:** The MoA framework involves multiple layers of LLMs, where each layer\'s agents use the outputs from the previous layer to generate refined responses. This process does not require fine-tuning and relies on prompting and generation interfaces.\n4. **Performance:** The MoA models achieve state-of-the-art performance on benchmarks like AlpacaEval 2.0, MT-Bench, and FLASK, surpassing GPT-4 Omni. For instance, the MoA using only open-source LLMs leads AlpacaEval 2.0 with a score of 65.1% compared to 57.5% by GPT-4 Omni.\n\n**Conclusion:** The Mixture-of-Agents methodology significantly enhances the capabilities of large language models by leveraging their collaborative potential, resulting in superior performance on various benchmarks.\n\n**Practical Implications:**\n- The MoA methodology can be applied to various domains requiring high-quality text generation, such as automated content creation, customer support, and educational tools.\n- The collaborative nature of MoA can be further enhanced by introducing additional aggregators, iteratively synthesizing and refining responses to produce superior outcomes.\n\n**Example:** In a case study involving text-to-video generation, the MoA methodology demonstrated superior integration of generated text with background, maintaining clarity and consistency over time. This was particularly evident in the LAION-subset dataset, where the MoA method correctly displayed visual characters and maintained text structure even with large camera movements. By focusing on these aspects, the MoA methodology not only addresses current challenges in LLM collaboration but also inspires further exploration and innovation in the field of AI-driven content generation.'
+# stop_condition_prompt = 'You are a task evaluation assistant. Based on the question and answer, check if the task meets the standards of completeness, accuracy, relevance, clarity, and user satisfaction.'
+# role = 'Response validation assistant.'
+# objective = "Determine if the answer satisfies the question's requirements."
+# specifics = """Analyze the question to identify key elements and expectations.
+# Compare the answer against these elements.
+# Assess whether the answer fully addresses the question."""
+# results = 'Respond with "Yes" if the answer meets the requirements, or "No" if it does not.'
+# example = """
+# 1. **Question:** "List all publications in AI from 2015 to 2023 focusing on neural networks."
+#    - **Answer:** "Publications include research on neural networks in AI from 2015 to 2023."
+#    - **Result:** "Yes"
+# 2. **Question:** "Find research articles about quantum computing breakthroughs in 2021."
+#    - **Answer:** "Articles from 2020 on general quantum computing topics."
+#    - **Result:** "No"
+# """
+#
+# predict_stop_condition = dspy.Predict(init_costar_signature(input_fields={'context':"The content that needs suggestions"},role=role,objective=objective,specifics=specifics,
+#                                                                   results=results,example=example))
+#
+#
+# stop_condition = predict_stop_condition(role=role,
+#                                         objective=objective,
+#                                         specifics = specifics,
+#                                         results=results,
+#                                         example=example,question=question,context=refinement_answer,**dict(temperature=0.6 + 0.0001 * random.uniform(-1, 1)))
+# evaluation_result_module = EvaluationResultModule()
+# status = evaluation_result_module.forward(question=question,context=refinement_answer)
+# print(status)

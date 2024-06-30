@@ -1,36 +1,26 @@
 AGENT:
-#  PROXY_URL: http://192.168.0.75:10809
-#  ROLE: I want you to act as a spoken English teacher and improver. I will speak to you in English and you will repeat my words in spoken English. I want you to keep your words neat, limiting to 100 words. I want you also strictly point out my grammar mistakes, typos, and factual errors. Remember, I want you to strictly point out my grammar mistakes, typos, and factual errors.
-#  BACKSTORY: null
-#  TASK: Does Input spport variable input？ Can Innput gets content input from the terminal window?
 
-  PROXY_URL: http://192.168.0.75:10809
-  TASK: Provide a detailed summary of the theme and explanation of the paper 'Text-Animator Controllable Visual Text Video Generation'. Additionally, explain which papers it cites, what achievements it has made, when it was written, and who the authors are.
+  TASK: 总结Mixture-of-Agents Enhances Large Language Model Capabilities论文里面的内容,并且说明作者,时间. 重点及论文的成果.
   RAG:
     MODULE_PATH: /mnt/c/Users/chenzi/Desktop/project/model/bce-embedding-base_v1
     PG_CONNECTION: postgresql+psycopg://langchain:langchain@localhost:6024/langchain
     COLLECTION_NAME: pdf
     IS_UPLOAD_FILE: true
     FILES_PATH:
-      - /mnt/c/Users/cc/Desktop/pic/Retrieval-Augmented Generation with Knowledge Graphs for Customer Service Question Answering.pdf
+      - /mnt/c/Users/chenzi/Desktop/project/data/Text-Animator Controllable Visual Text Video Generation.pdf
+      - /mnt/c/Users/chenzi/Desktop/project/data/moa-llm.pdf
     ENCODING: utf-8
     CHUNK_SIZE: 256
-    RAG_SEARCH_NUM: 5 # 数值越大 通过rag查询出来的结果越多 相应的内容也就越多
+    RAG_SEARCH_NUM: 4 # 数值越大 通过rag查询出来的结果越多 相应的内容也就越多
 
 
 MODEL:
-#  MODEL_API_KEY:
-#  MODEL_NAME: moonshot-v1-32k
-#  MODEL_MAX_TOKENS: 2048
-#  MODEL_API_URL: https://api.moonshot.cn/v1
-
   MODEL_API_KEY:
   MODEL_NAME: gpt-4o
   MODEL_MAX_TOKENS: 2048
 
-env:
-  SERPER_API_KEY: 2e4d9ef16c251219c58cb2b04509d626e43b09c1
-  AGENTOPS_API_KEY: 6805b2d1-50f8-4b7c-b88b-cff2b1c6ef27
+ENV:
+  PROXY_URL: http://192.168.31.50:10890
 
 
 

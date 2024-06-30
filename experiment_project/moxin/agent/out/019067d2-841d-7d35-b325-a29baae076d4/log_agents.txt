@@ -1,0 +1,74 @@
+{'model_api_key': '', 'model_name': 'gpt-4o', 'model_max_tokens': 2048, 'module_path': '/mnt/c/Users/chenzi/Desktop/project/model/bce-embedding-base_v1', 'pg_connection': 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain', 'collection_name': 'pdf', 'is_upload_file': True, 'files_path': ['/mnt/c/Users/chenzi/Desktop/project/data/Text-Animator Controllable Visual Text Video Generation.pdf', '/mnt/c/Users/chenzi/Desktop/project/data/moa-llm.pdf'], 'encoding': 'utf-8', 'chunk_size': 256, 'rag_search_num': 4, 'proxy_url': 'http://192.168.31.50:10890', 'task': '总结Mixture-of-Agents Enhances Large Language Model Capabilities论文里面的内容,并且说明作者,时间. 重点及论文的成果.'}
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.04it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.04it/s]
+当前数据入库完毕 :  1.875225305557251
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 95.98it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 71.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 77.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 168.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 148.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 154.62it/s]
+WARNING: Not all input fields were provided to module. Present: ['question', 'objective', 'specifics', 'results', 'example', 'role']. Missing: ['actions', 'backstory'].
+WARNING: Not all input fields were provided to module. Present: ['question', 'objective', 'actions', 'example', 'role', 'backstory', 'rag_data', 'llm_data']. Missing: ['specifics', 'results'].
+任务完成的结果是  ： Reasoning: Let's think step by step in order to produce the answer. We need to summarize the content of the paper "Mixture-of-Agents Enhances Large Language Model Capabilities," including the authors, time, key points, and the results of the paper. We will primarily use the data from `rag_data` and supplement it with `llm_data` if necessary.
+
+1. Identify the authors and the time of publication.
+2. Summarize the key points of the paper.
+3. Highlight the results and contributions of the paper.
+
+Answer: 
+
+**Authors and Time:**
+The paper "Mixture-of-Agents Enhances Large Language Model Capabilities" was authored by Junlin Wang (Duke University, Together AI), Jue Wang (Together AI), Ben Athiwaratkun (Together AI), Ce Zhang (University of Chicago, Together AI), and James Zou (Stanford University, Together AI). It was published on June 7, 2024.
+
+**Key Points:**
+1. **Introduction:**
+   - The paper discusses recent advances in large language models (LLMs) and their substantial capabilities in natural language understanding and generation tasks.
+   - It addresses the challenge of harnessing the collective expertise of multiple LLMs to create a more capable and robust model.
+
+2. **Collaborativeness of LLMs:**
+   - The authors identify a phenomenon termed the "collaborativeness of LLMs," where an LLM tends to generate better responses when presented with outputs from other models, even if these other models are less capable.
+   - They categorize LLMs into two roles: Proposers (generate useful reference responses) and Aggregators (synthesize responses from other models into a single, high-quality output).
+
+3. **Mixture-of-Agents (MoA) Methodology:**
+   - The paper proposes a Mixture-of-Agents (MoA) methodology that leverages the collective strengths of multiple LLMs.
+   - The MoA architecture consists of multiple layers, each comprising several LLM agents. Each agent takes outputs from agents in the previous layer as auxiliary information to generate its response.
+   - The methodology does not require fine-tuning and utilizes the interface of prompting and generation of LLMs.
+
+**Results:**
+- The MoA models achieve state-of-the-art performance on benchmarks such as AlpacaEval 2.0, MT-Bench, and FLASK, surpassing GPT-4 Omni.
+- For instance, the MoA using only open-source LLMs leads AlpacaEval 2.0 with a score of 65.1%, compared to 57.5% by GPT-4 Omni.
+- The paper demonstrates that many LLMs possess capabilities both as aggregators and proposers, with some models displaying specialized proficiencies in distinct roles.
+- The MoA framework achieves a new state-of-the-art win rate of 65.8% on AlpacaEval 2.0, compared to the previous best of 57.5% achieved by GPT-4 Omni.
+
+**Contributions:**
+1. The introduction of a novel Mixture-of-Agents framework designed to leverage the strengths of multiple LLMs.
+2. The finding of the inherent collaborativeness among LLMs, where models generate better quality responses when they have access to outputs from other models.
+3. Achieving state-of-the-art performance on multiple highly-competitive benchmarks.
+
+Answer result: The paper "Mixture-of-Agents Enhances Large Language Model Capabilities" by Junlin Wang, Jue Wang, Ben Athiwaratkun, Ce Zhang, and James Zou, published on June 7, 2024, introduces a Mixture-of-Agents (MoA) methodology that leverages the collective strengths of multiple LLMs. The MoA models achieve state-of-the-art performance on benchmarks such as AlpacaEval 2.0, MT-Bench, and FLASK, surpassing GPT-4 Omni. The paper highlights the collaborativeness of LLMs and categorizes them into Proposers and Aggregators, demonstrating that many LLMs can improve their responses by referencing outputs from other models. The MoA framework achieves a new state-of-the-art win rate of 65.8% on AlpacaEval 2.0.
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+RuntimeError: Dora Runtime raised an error.
+
+Caused by:
+   0: main task failed
+   1: failed to send node output
+   2: unknown output
+
+Location:
+    apis/rust/node/src/node/mod.rs:205:13

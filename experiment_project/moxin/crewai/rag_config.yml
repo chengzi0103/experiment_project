@@ -64,8 +64,8 @@ tasks:
       collection_name: 'pdf'
       is_upload_file: true
       pg_connection: 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain'
-      
       files_path: ['/mnt/c/Users/chenzi/Desktop/project/data/moa-agent.pdf','/mnt/c/Users/chenzi/Desktop/project/data/Text-Animator Controllable Visual Text Video Generation.pdf']
+     
      
       下面是任务： 总结Mixture-of-Agents Enhances Large Language Model Capabilities论文里面的内容,并且说明作者,时间. 重点及论文的成果.
     expected_output: 'details'

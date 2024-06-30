@@ -1,14 +1,3 @@
-# from dora import Node
-# import pyarrow as pa
-#
-# node = Node()
-#
-# event = node.next()
-# if event["type"] == "INPUT":
-#     message = event["value"][0].as_py()
-#     print(
-#         f"""Result:  {message}"""
-#     )
 
 
 from dora import Node, DoraStatus
@@ -31,13 +20,3 @@ class Operator:
 
         send_output('output_result',pa.array(['This is Output Loader ']),dora_event['metadata'])
         return DoraStatus.CONTINUE
-# event = node.next()
-# if event["type"] == "INPUT":
-#     message = event["value"][0].as_py()
-#     id = event["id"]
-#     print('id: ',id)
-#     print('---------------------')
-#     print(
-#         f"""Result:  {message}"""
-#
-#     )

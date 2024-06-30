@@ -58,7 +58,7 @@ def init_costar_signature(role: Union[str, None] = None, backstory: Union[str, N
         'actions': dspy.InputField(desc=inputs.get('actions','Enumerates the specific steps that need to be executed.')),
         'results': dspy.InputField(desc=inputs.get('results','Task result output type')),
         'example': dspy.InputField(desc=inputs.get('example','Provides an example related to the task. If there is none, then it is empty. ')),
-        'answer': dspy.OutputField(desc=inputs.get('answer','Answer: ')),
+        'answer': dspy.OutputField(desc=inputs.get('answer','Answer result: ')),
         'role': dspy.InputField(desc=inputs.get('role','Specifies the role or purpose of the module.')),
         'backstory': dspy.InputField(desc=inputs.get('backstory','Provides the background information for the task.'))
     }

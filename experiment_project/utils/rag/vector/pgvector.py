@@ -56,8 +56,8 @@ def upload_files_to_vector(vectorstore:PGVector, files_path: List[str], chunk_si
     """
     t1 = time.time()
     docs = split_files(files_path=files_path, chunk_size=chunk_size, encoding=encoding)
-
-    vectorstore.add_documents(docs, ids=[doc.metadata["id"] for doc in docs])
+    if len(docs) >=1:
+        vectorstore.add_documents(docs, ids=[doc.metadata["id"] for doc in docs])
     print('当前数据入库完毕 : ', time.time() - t1)
 
 def search_vector(vectorstore:PGVector, keywords: Union[List[str],str], k: int = 4):
@@ -84,6 +84,8 @@ def search_vector(vectorstore:PGVector, keywords: Union[List[str],str], k: int =
         data = []
         for keyword in keywords:
             results = vectorstore.similarity_search(keyword, k=k)
+            data_values =  [item for d in data for sublist in d.values() for item in sublist]
+            results = [item for item in results if item not in data_values]
             data.append({keyword: list(set([i.page_content for i in results]))})
 
     return data

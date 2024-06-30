@@ -1,0 +1,78 @@
+{'model_api_key': '', 'model_name': 'gpt-4o', 'model_max_tokens': 2048, 'module_path': '/mnt/c/Users/chenzi/Desktop/project/model/bce-embedding-base_v1', 'pg_connection': 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain', 'collection_name': 'pdf', 'is_upload_file': True, 'files_path': ['/mnt/c/Users/chenzi/Desktop/project/data/Text-Animator Controllable Visual Text Video Generation.pdf', '/mnt/c/Users/chenzi/Desktop/project/data/moa-llm.pdf'], 'encoding': 'utf-8', 'chunk_size': 256, 'rag_search_num': 4, 'proxy_url': 'http://192.168.31.50:10890', 'task': '总结Mixture-of-Agents Enhances Large Language Model Capabilities论文里面的内容,并且说明作者,时间. 重点及论文的成果.'}
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:01<00:00,  1.01s/it]
+Batches: 100%|██████████| 1/1 [00:01<00:00,  1.01s/it]
+当前数据入库完毕 :  1.8640356063842773
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 106.89it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 81.96it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 159.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 149.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 131.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 162.21it/s]
+WARNING: Not all input fields were provided to module. Present: ['question', 'objective', 'specifics', 'results', 'example', 'role']. Missing: ['actions', 'backstory'].
+WARNING: Not all input fields were provided to module. Present: ['question', 'objective', 'actions', 'example', 'role', 'backstory', 'rag_data', 'llm_data']. Missing: ['specifics', 'results'].
+在第0次迭代后 , evaluate_answer :   **Suggestions**:
+
+1. **Completeness**: Ensure that all relevant details from the paper are included, such as any specific techniques or algorithms used within the MoA framework.
+2. **Accuracy**: Double-check the publication date and the names of the authors to ensure they are correct.
+3. **Relevance**: Focus on the most impactful results and contributions of the paper to highlight its significance in the field.
+4. **Clarity**: Simplify complex terms and methodologies to make the summary more accessible to a broader audience.
+5. **User Satisfaction**: Include any potential applications or implications of the MoA framework to provide a broader context for its importance.
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 102.21it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 113.98it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 121.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 129.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 117.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+Batches: 100%|██████████| 1/1 [00:00<00:00, 50.88it/s]
+WARNING: Not all input fields were provided to module. Present: ['question', 'objective', 'specifics', 'results', 'example', 'role']. Missing: ['actions', 'backstory'].
+WARNING: Not all input fields were provided to module. Present: ['question', 'objective', 'actions', 'example', 'role', 'backstory', 'rag_data', 'llm_data']. Missing: ['specifics', 'results'].
+WARNING: Not all input fields were provided to module. Present: ['question', 'objective', 'actions', 'example', 'role', 'backstory', 'rag_data', 'llm_data']. Missing: ['specifics', 'results'].
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+RuntimeError: Dora Runtime raised an error.
+
+Caused by:
+   0: main task failed
+   1: operator agents/op raised an error
+   2: error in Python module at /mnt/c/Users/chenzi/Desktop/project/experiment_project/experiment_project/moxin/agent/selfrefine_rag_agent.py
+   3: Traceback (most recent call last):
+        File "/mnt/c/Users/chenzi/Desktop/project/experiment_project/experiment_project/moxin/agent/selfrefine_rag_agent.py", line 41, in on_event
+          result = refine_module.forward(question=task)
+        File "/mnt/c/Users/chenzi/Desktop/project/experiment_project/experiment_project/agents/dspy/rag.py", line 276, in forward
+          refinement_answer = self.refinement(question=question, evaluate_data=answer,feedback_question=feedback_question)
+        File "/mnt/c/Users/chenzi/Desktop/project/experiment_project/experiment_project/agents/dspy/rag.py", line 260, in refinement
+          answer = self.get_result(quality_enhancer)
+        File "/mnt/c/Users/chenzi/Desktop/project/experiment_project/experiment_project/agents/dspy/rag.py", line 46, in get_result
+          answer = result_module.objective
+        File "/home/cc/miniconda3/envs/py310/lib/python3.10/site-packages/dspy/primitives/example.py", line 24, in __getattr__
+          raise AttributeError(f"'{type(self).__name__}' object has no attribute '{key}'")
+
+      AttributeError: 'Prediction' object has no attribute 'objective'
+
+Location:
+    binaries/runtime/src/operator/python.rs:28:9
