@@ -13,10 +13,9 @@ coverage>=7.3.2
 pendulum>=3.0.0  # pendulum>=3.0.0 对时间 pendulum.parse('2023-01-01') 处理不一样,3.0.0更灵活
 openpyxl
 
+
 # --------- path --------- #
 pathlib
-
-# --------- data --------- #
 
 
 # --------- config --------- #
@@ -24,9 +23,6 @@ hydra-core>=1.3.2
 hydra-colorlog>=1.2.0
 hydra-optuna-sweeper>=1.2.0
 
-# --------- matrix --------- #
-matrix-nio
-simplematrixbotlib
 
 
 # --------- ai-tools --------- #
@@ -34,13 +30,14 @@ langchain-openai
 langchain-community
 langchain_cohere
 langchain_postgres
-# --------- ai --------- #
 openai
 duckduckgo-search
 
 
 # --------- db --------- #
 psycopg[binary]
+faiss-cpu
+
 
 # --------- deploy --------- #
 # ansible
@@ -54,7 +51,7 @@ numpy
 pandas
 polars
 pypdf
-
+pyarrow
 
 # --------- graph database --------- #
 neo4j
@@ -67,18 +64,16 @@ pyyaml
 # --------- agent --------- #
 crewai[tools]
 pyautogen
+dspy-ai
 
-
-# --------- database --------- #
-faiss-cpu
-# sqlite3
+# --------- distributed --------- #
+dora-rs
 
 # --------- embedding --------- #
 sentence_transformers
 transformers
 
 
-# --------- dspy --------- #
-dspy-ai
+
 
 
